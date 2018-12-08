@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "start": "node server.js",
+    "snyk-protect": "snyk protect",
+    "prepublish": "npm run snyk-protect"
   },
   "repository": {
     "type": "git",
@@ -20,9 +22,11 @@
   "homepage": "https://github.com/thgaskell/GAPTCHA#readme",
   "dependencies": {
     "bluebird": "^3.5.0",
-    "body-parser": "^1.17.1",
-    "express": "^4.15.2",
+    "body-parser": "^1.18.2",
+    "express": "^4.16.0",
     "m2x": "^4.3.0",
-    "node-vincenty": "0.0.6"
-  }
+    "node-vincenty": "0.0.6",
+    "snyk": "^1.116.2"
+  },
+  "snyk": true
 }
