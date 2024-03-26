@@ -21,7 +21,7 @@
   "dependencies": {
     "bluebird": "^3.5.0",
     "body-parser": "^1.17.1",
-    "express": "^4.15.2",
+    "express": "^4.19.2",
     "m2x": "^4.3.0",
     "node-vincenty": "0.0.6"
   }
