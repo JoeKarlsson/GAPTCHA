@@ -3,16 +3,17 @@ import { startSimulation, describeEvent, isFastMode } from './simulated-players.
 
 const MAX_ITEMS = 5;
 
-function describeStats(state) {
+export function describeStats(state) {
   return `${state.hunters} hunters active now · ${state.attempts} attempts since the checkpoint was last found`;
 }
 
 // `list` gets one <li> per event, newest first; `stats` shows the counts.
-export function mountHunterFeed({ list, stats, checkpoint, storage, onScan = () => {} }) {
+export function mountHunterFeed({ list, stats, checkpoint, storage, delays, onScan = () => {} }) {
   const simulation = startSimulation({
     checkpoint,
     storage,
     fast: isFastMode(window.location.search),
+    delays,
     onEvent(event, state) {
       const item = document.createElement('li');
       item.textContent = describeEvent(event);

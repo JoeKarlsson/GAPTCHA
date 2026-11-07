@@ -99,9 +99,9 @@ export function resetAttempts(storage, random = Math.random) {
 }
 
 // Runs the feed: calls onEvent for each simulated event until stop() is called.
-export function startSimulation({ checkpoint, storage, onEvent, seed = Date.now(), fast = false }) {
+export function startSimulation({ checkpoint, storage, onEvent, seed = Date.now(), fast = false, delays: slowDelays = SCAN_DELAY_MS }) {
   const random = seededRandom(seed);
-  const delays = fast ? FAST_SCAN_DELAY_MS : SCAN_DELAY_MS;
+  const delays = fast ? FAST_SCAN_DELAY_MS : slowDelays;
   let timer = null;
 
   function schedule() {

@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 import { readFileSync, readdirSync } from 'node:fs';
+import { watchEmbedDemo } from './embed-helpers.js';
 
 const PAGES = ['/', '/play.html', '/404.html'];
 const HONOLULU_CHECKPOINT = { latitude: 21.285471, longitude: -157.807362 };
@@ -203,7 +204,7 @@ test('the play page doesn’t scan until a marker is in view', async ({ page, co
 
 test('Leaflet loads only when the map nears the screen', async ({ page }) => {
   const leafletRequests = [];
-  page.on('request', (request) => { if (request.url().includes('leaflet')) leafletRequests.push(request.url()); });
+  page.on('request', (request) => { if (request.url().includes('cdn.jsdelivr.net/npm/leaflet')) leafletRequests.push(request.url()); });
   await page.goto('/');
   await page.waitForLoadState('networkidle');
   expect(leafletRequests).toEqual([]);
@@ -219,7 +220,7 @@ test('every section is the same distance from the next', async ({ page }, testIn
     await page.goto('/');
     const gaps = await page.evaluate(() => {
       // content box of each section: its container, including anything that hangs out of it (the hero phone)
-      const boxes = [...document.querySelectorAll('.section > .container')].map((container) => {
+      const boxes = [...document.querySelectorAll('.section > .container')].filter((container) => container.getClientRects().length).map((container) => {
         let bottom = container.getBoundingClientRect().bottom;
         for (const element of container.querySelectorAll('*')) {
           if (!element.closest('.leaflet-container')) bottom = Math.max(bottom, element.getBoundingClientRect().bottom);
@@ -240,4 +241,37 @@ test('every local CSS and JS URL carries a content hash', async ({ page }) => {
     expect(urls.length, path).toBeGreaterThan(0);
     for (const url of urls) expect(url, `${path} ${url}`).toMatch(/\?v=[0-9a-f]{10}$/);
   }
+});
+
+test('?embed plays a demo hunt and never asks for location or the camera', async ({ page, context }) => {
+  await watchEmbedDemo(context);
+  const errors = watchForErrors(page);
+  await page.goto('/?embed&simulate=fast');
+  await expect(page.locator('#demo')).toBeVisible();
+  await expect(page.locator('.hero')).toBeHidden();
+  await expect(page.locator('#win-button')).toBeHidden();
+  await expect(page.locator('#demo-map path.demo-scan').first()).toBeAttached();
+  await expect.poll(() => page.evaluate(() => window.__statuses), { timeout: 10000 })
+    .toContainEqual(expect.stringMatching(/^GOT ’EM! It took a total of \d+ attempts since it was last found\.$/));
+  await expect(page.locator('#demo-hunter-feed li').first()).toHaveText(/scanned a marker|found the checkpoint/);
+  await expect(page.getByRole('link', { name: 'gaptcha.joekarlsson.com' })).toHaveAttribute('target', '_blank');
+  expect(await page.evaluate(() => window.__privacyCalls)).toEqual([]);
+  expect(await page.evaluate(() => localStorage.length)).toBe(0);
+  expect(errors).toEqual([]);
+});
+
+test('the embedded demo has no axe violations', async ({ page }) => {
+  await page.goto('/?embed');
+  await expect(page.locator('#demo-map .leaflet-container, #demo-map.leaflet-container')).toBeAttached();
+  const results = await new AxeBuilder({ page })
+    .withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa'])
+    .exclude('.leaflet-container')
+    .analyze();
+  expect(results.violations).toEqual([]);
+});
+
+test('the full page is unchanged when it isn’t framed', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.locator('#demo')).toBeHidden();
+  await expect(page.locator('.hero')).toBeVisible();
 });

@@ -35,6 +35,7 @@
   <link rel="icon" href="img/favicon-32x32.png" type="image/png" sizes="32x32">
   <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
   <link rel="manifest" href="site.webmanifest">
+  <script src="js/embed-flag.js"></script>
   <link rel="stylesheet" href="css/normalize.css">
   <link rel="stylesheet" href="css/skeleton.css">
   <link rel="stylesheet" href="css/styles.css">
@@ -65,6 +66,24 @@
   </header>
 
   <main id="main">
+    <section id="demo" class="section demo" aria-labelledby="demo-heading">
+      <div class="container">
+        <div class="row">
+          <div class="one-half column">
+            <h2 class="demo-heading" id="demo-heading">GAPTCHA</h2>
+            <p>An augmented reality scavenger hunt. Scan printed markers to get arrows toward a hidden checkpoint, follow where the arrows cross, then check whether you found it.</p>
+            <p id="demo-status" class="demo-status" role="status" aria-live="polite"></p>
+            <p id="demo-hunter-stats" class="hunter-stats"></p>
+            <ul id="demo-hunter-feed" class="hunter-feed" aria-label="Other hunters"></ul>
+            <p class="simulated-note">Demo: playing itself, and the other hunters are simulated. Open <a href="https://gaptcha.joekarlsson.com/" target="_blank" rel="noopener">gaptcha.joekarlsson.com</a> on your phone to hunt for real.</p>
+          </div>
+          <div class="one-half column">
+            <div id="demo-map" class="demo-map" role="region" aria-label="Map of the demo hunt: marker scans, their arrows and the checkpoint once found"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <section class="section how-it-works" aria-labelledby="how-heading">
       <div class="container">
         <h2 class="section-heading" id="how-heading">How it works</h2>

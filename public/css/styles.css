@@ -133,7 +133,7 @@ button:focus-visible,
   width: auto;
   margin: var(--space-4) auto calc(-1 * var(--phone-overhang));
 }
-.hero + main > .section:first-child {
+.hero + main > .how-it-works {
   /* the hero has no bottom padding, so this section supplies the full gap below the phone */
   padding-top: calc(2 * var(--section-space) + var(--phone-overhang));
 }
@@ -254,4 +254,18 @@ button:focus-visible,
 }
 @media (min-width: 550px) {
   .value-description { min-height: 3.2em; }
+}
+
+/* Embedded demo (js/embed-flag.js sets data-embed when the page is framed or has ?embed)
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+#demo { display: none; }
+[data-embed] #demo { display: block; padding: var(--space-4) 0; text-align: left; }
+[data-embed] .hero,
+[data-embed] main > section:not(#demo),
+[data-embed] .site-footer { display: none; }
+.demo-heading { font-size: 3.6rem; margin-bottom: var(--space-2); }
+.demo-status { min-height: 3.2em; font-weight: 600; font-size: 1.9rem; }
+.demo-map { width: 100%; height: 320px; margin-top: var(--space-3); }
+@media (min-width: 550px) {
+  .demo-map { height: 480px; margin-top: 0; }
 }
