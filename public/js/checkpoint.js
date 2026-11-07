@@ -122,3 +122,9 @@ export function tryCapture(player, storage) {
 export function savedScans(storage) {
   return readJson(storage, STORAGE_KEYS.scans, []);
 }
+
+// The checkpoint being hunted, without creating one: the saved demo checkpoint, or the original.
+export function knownCheckpoint(storage) {
+  const saved = readJson(storage, STORAGE_KEYS.checkpoint, null);
+  return saved ? { ...saved, isDemo: true } : { ...ORIGINAL_CHECKPOINT, isDemo: false };
+}

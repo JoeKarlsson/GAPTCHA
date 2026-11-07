@@ -76,7 +76,7 @@ test('standing on the checkpoint wins, and a miss says so', async ({ page, conte
 
   await context.setGeolocation(HONOLULU_CHECKPOINT);
   await page.getByRole('button', { name: 'Did I win?' }).click();
-  await expect(page.locator('#win-status')).toHaveText(/GOT ’EM! You found it after 2 attempts/);
+  await expect(page.locator('#win-status')).toHaveText(/GOT ’EM! It took a total of \d+ attempts since it was last found/);
 });
 
 test('players far from Honolulu get a demo checkpoint and their scans land on the map', async ({ page, context }) => {
@@ -89,7 +89,7 @@ test('players far from Honolulu get a demo checkpoint and their scans land on th
 
   await page.goto('/');
   await expect(page.locator('#scan-summary')).toHaveText(/^1 scan from this browser/);
-  await expect(page.locator('#scan-map path.leaflet-interactive')).toHaveCount(1);
+  await expect(page.locator('#scan-map path.own-scan')).toHaveCount(1);
 });
 
 test('at 2560px the content stays in the centered column', async ({ page }, testInfo) => {
@@ -153,4 +153,27 @@ test('photos keep their proportions at every width', async ({ page }) => {
     if (!ratios || !ratios.rendered) continue;
     expect(Math.abs(ratios.rendered - ratios.natural), ratios.src).toBeLessThan(0.02);
   }
+});
+
+test('simulated hunters show up in the feed and on the map', async ({ page, context }) => {
+  await context.grantPermissions(['geolocation']);
+  await context.setGeolocation({ latitude: 44.9778, longitude: -93.265 });
+  await page.goto('/?simulate=fast');
+  await expect(page.locator('#hunter-stats')).toHaveText(/\d+ hunters active now · \d+ attempts since the checkpoint was last found/);
+  await expect(page.locator('#hunter-feed li').first()).toHaveText(/scanned a marker|found the checkpoint/);
+  await expect(page.locator('#hunter-feed li')).toHaveCount(5);
+  await expect(page.locator('#scan-map path.hunter-dot').first()).toBeAttached();
+  await expect(page.getByText('Other hunters are simulated in this demo.')).toBeVisible();
+
+  await page.goto('/play.html?simulate=fast');
+  await expect(page.locator('#hunter-feed li').first()).toHaveText(/scanned a marker|found the checkpoint/);
+});
+
+test('your own win uses the shared attempt counter and resets it', async ({ page, context }) => {
+  await context.grantPermissions(['geolocation']);
+  await context.setGeolocation(HONOLULU_CHECKPOINT);
+  await page.addInitScript(() => localStorage.setItem('gaptcha-simulation', JSON.stringify({ attempts: 41, hunters: 5 })));
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Did I win?' }).click();
+  await expect(page.locator('#win-status')).toHaveText('GOT ’EM! It took a total of 42 attempts since it was last found.');
 });

@@ -15,6 +15,10 @@ An augmented reality scavenger hunt. Play it at **https://gaptcha.joekarlsson.co
 
 The original checkpoint is the Sacred Hearts cafeteria in Honolulu, where we built this for the 2017 AT&T hackathon. Anywhere more than 5 km from it, GAPTCHA hides a demo checkpoint 100 to 300 meters from you on your first scan, and keeps it until you find it or tap **Start a new hunt**.
 
+### Other hunters are simulated
+
+There's no server, so the other players are made up. `public/js/simulated-players.js` invents a hunter scanning a marker somewhere 60 to 600 meters from your checkpoint every 5 to 25 seconds. It also keeps a shared attempt counter that your own scans add to, and once in a while a simulated hunter finds the checkpoint and the count starts over. Their scans show up in the feed on the play page and as white dots on the map. The page says they're simulated. Add `?simulate=fast` to a URL to speed the feed up for testing.
+
 ## What changed in 2026
 
 The 2017 version ran on Express and stored the checkpoint and every scan in AT&T M2X, which shut down in 2021. It's now a static site:

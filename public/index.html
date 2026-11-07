@@ -119,12 +119,15 @@
       <div class="container">
         <div class="row">
           <div class="one-half column">
-            <h2 class="section-heading" id="map-heading">Your scans</h2>
-            <p>The 2017 version streamed every scan to AT&amp;T M2X, which shut down in 2021. Now your scans stay in this browser and show up here.</p>
+            <h2 class="section-heading" id="map-heading">Live scans</h2>
+            <p>The 2017 version streamed every scan to AT&amp;T M2X, which shut down in 2021. Now your scans stay in this browser and show up here, next to the other hunters.</p>
             <p id="scan-summary"></p>
+            <p id="hunter-stats" class="hunter-stats"></p>
+            <ul id="hunter-feed" class="hunter-feed" role="log" aria-live="polite" aria-label="Other hunters"></ul>
+            <p class="simulated-note">Other hunters are simulated in this demo.</p>
           </div>
           <div class="one-half column">
-            <div id="scan-map" role="region" aria-label="Map of your scans"></div>
+            <div id="scan-map" role="region" aria-label="Map of your scans and other hunters’ scans"></div>
           </div>
         </div>
       </div>

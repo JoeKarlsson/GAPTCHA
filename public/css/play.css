@@ -24,3 +24,9 @@ html, body { margin: 0; height: 100%; font-family: system-ui, -apple-system, "Se
 .panel .help { font-size: 1rem; margin-bottom: 0; }
 .panel a { color: var(--accent); }
 .panel a:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.hunters { max-width: 40rem; margin: 0 auto; font-size: 1rem; }
+.hunters p { margin-bottom: 0.25rem; }
+.hunter-feed { list-style: none; margin: 0 0 0.25rem; padding: 0; }
+/* Keep the camera visible: the newest two events only. */
+.hunter-feed li:nth-child(n+3) { display: none; }
+.simulated-note { font-size: 1rem; }

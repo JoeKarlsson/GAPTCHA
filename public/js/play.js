@@ -1,4 +1,6 @@
-import { scan, compassName } from './checkpoint.js';
+import { scan, compassName, knownCheckpoint } from './checkpoint.js';
+import { addPlayerAttempt } from './simulated-players.js';
+import { mountHunterFeed } from './hunter-feed.js';
 
 const arrow = document.getElementById('arrow');
 const status = document.getElementById('status');
@@ -37,6 +39,7 @@ if (!('geolocation' in navigator)) {
     (position) => {
       const player = { lat: position.coords.latitude, lon: position.coords.longitude };
       const { bearingDegrees } = scan(player, storage());
+      addPlayerAttempt(storage());
       pointArrow(bearingDegrees);
       status.textContent = `The checkpoint is to the ${compassName(bearingDegrees)} (${Math.round(bearingDegrees)}°). Scan from somewhere else to close in.`;
     },
@@ -46,3 +49,10 @@ if (!('geolocation' in navigator)) {
     { enableHighAccuracy: true, timeout: 20000 }
   );
 }
+
+mountHunterFeed({
+  list: document.getElementById('hunter-feed'),
+  stats: document.getElementById('hunter-stats'),
+  checkpoint: knownCheckpoint(storage()),
+  storage: storage(),
+});
