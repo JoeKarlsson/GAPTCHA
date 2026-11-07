@@ -34,7 +34,10 @@ npm install
 npm run serve        # http://localhost:4791
 npm test             # unit tests for the bearing/distance math
 npx playwright test  # e2e, axe, layout and metadata tests; includes a fake-camera AR test
+node scripts/render-og.mjs  # redraws the 1200x630 share card, public/img/og.png
 ```
+
+After changing the share card, bump the `?v=` on the `og:image` URLs so networks fetch the new one.
 
 Pushing to `master` runs the tests and deploys `public/` to GitHub Pages.
 

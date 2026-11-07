@@ -97,6 +97,7 @@ test('players far from Honolulu get a demo checkpoint and their scans land on th
 
   await page.goto('/');
   await expect(page.locator('#scan-summary')).toHaveText(/^1 scan from this browser/);
+  await page.locator('#scan-map').scrollIntoViewIfNeeded();
   await expect(page.locator('#scan-map path.own-scan')).toHaveCount(1);
 });
 
@@ -131,7 +132,7 @@ test('every page has its metadata and the sitemap lists the indexable ones', asy
     expect(description?.length, `${file} description`).toBeLessThanOrEqual(160);
     expect(html, file).toContain('<meta name="color-scheme" content="only light">');
     expect(html, file).toContain('<meta name="darkreader-lock">');
-    expect(html, file).toContain('<meta property="og:image" content="https://gaptcha.joekarlsson.com/img/og.png">');
+    expect(html, file).toContain('<meta property="og:image" content="https://gaptcha.joekarlsson.com/img/og.png?v=2">');
     expect(html.match(/<h1[\s>]/g)?.length, `${file} h1 count`).toBe(1);
     const title = html.match(/<title>([^<]+)<\/title>/)[1];
     expect(titles.has(title), `duplicate title ${title}`).toBe(false);
@@ -170,6 +171,7 @@ test('simulated hunters show up in the feed and on the map', async ({ page, cont
   await expect(page.locator('#hunter-stats')).toHaveText(/\d+ hunters active now · \d+ attempts since the checkpoint was last found/);
   await expect(page.locator('#hunter-feed li').first()).toHaveText(/scanned a marker|found the checkpoint/);
   await expect(page.locator('#hunter-feed li')).toHaveCount(5);
+  await page.locator('#scan-map').scrollIntoViewIfNeeded();
   await expect(page.locator('#scan-map path.hunter-dot').first()).toBeAttached();
   await expect(page.getByText('Other hunters are simulated in this demo.')).toBeVisible();
 
@@ -197,4 +199,35 @@ test('the play page doesn’t scan until a marker is in view', async ({ page, co
 
   await findMarker(page);
   await expect(page.locator('#status')).toContainText('checkpoint is to the');
+});
+
+test('Leaflet loads only when the map nears the screen', async ({ page }) => {
+  const leafletRequests = [];
+  page.on('request', (request) => { if (request.url().includes('leaflet')) leafletRequests.push(request.url()); });
+  await page.goto('/');
+  await page.waitForLoadState('networkidle');
+  expect(leafletRequests).toEqual([]);
+  await page.locator('#scan-map').scrollIntoViewIfNeeded();
+  await expect(page.locator('#scan-map .leaflet-tile-pane')).toBeAttached();
+  expect(leafletRequests.length).toBe(2);
+});
+
+test('every section is the same distance from the next', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'desktop', 'one viewport is enough; the spacing tokens are shared');
+  for (const width of [390, 1280]) {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto('/');
+    const gaps = await page.evaluate(() => {
+      // content box of each section: its container, including anything that hangs out of it (the hero phone)
+      const boxes = [...document.querySelectorAll('.section > .container')].map((container) => {
+        let bottom = container.getBoundingClientRect().bottom;
+        for (const element of container.querySelectorAll('*')) {
+          if (!element.closest('.leaflet-container')) bottom = Math.max(bottom, element.getBoundingClientRect().bottom);
+        }
+        return { top: container.getBoundingClientRect().top, bottom };
+      });
+      return boxes.slice(1).map((box, index) => Math.round(box.top - boxes[index].bottom));
+    });
+    expect(Math.max(...gaps) - Math.min(...gaps), `gaps at ${width}px: ${gaps.join(', ')}`).toBeLessThanOrEqual(4);
+  }
 });

@@ -23,6 +23,9 @@
   --space-3: 1.5rem;
   --space-4: 2rem;
   --space-5: 4rem;
+  --space-6: 6rem;
+  --section-space: var(--space-5);
+  --phone-overhang: var(--space-5);
 }
 
 /* Shared
@@ -90,11 +93,15 @@ button:focus-visible,
 .actions .button,
 .actions button { margin: 0; }
 /* Sections
+   Every section gets the same space above and below (--section-space), so the
+   gap between any two sections is the same. Skeleton's bottom margins on the
+   last element of a section are removed so they don't add to it.
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
 .section {
-  padding: 6rem 0;
+  padding: var(--section-space) 0;
   text-align: center;
 }
+.section :where(.container > :last-child, .column > :last-child) { margin-bottom: 0; }
 .section-heading,
 .section-description {
   margin-bottom: var(--space-3);
@@ -102,6 +109,8 @@ button:focus-visible,
 .section-heading { font-size: 3rem; }
 
 /* Hero
+   The phone sits on the bottom edge of the band and hangs --phone-overhang
+   below it; the next section adds that much to its top padding.
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
 .hero {
   background-color: var(--color-band);
@@ -109,21 +118,25 @@ button:focus-visible,
   background-blend-mode: multiply;
   background-size: cover;
   color: #fff;
-  padding-bottom: 5rem;
+  padding-bottom: 0;
 }
 .hero h1 { margin-bottom: var(--space-1); }
 .hero-button {
   font-size: 2.4rem;
 }
-.phone {
+.hero .phone {
+  display: block;
   position: relative;
+  z-index: 1;
   max-width: 80%;
-  margin: 3rem auto -12rem;
+  max-height: 480px;
+  width: auto;
+  margin: var(--space-4) auto calc(-1 * var(--phone-overhang));
 }
-
-/* How it works
-–––––––––––––––––––––––––––––––––––––––––––––––––– */
-
+.hero + main > .section:first-child {
+  /* the hero has no bottom padding, so this section supplies the full gap below the phone */
+  padding-top: calc(2 * var(--section-space) + var(--phone-overhang));
+}
 
 /* Map
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -132,7 +145,9 @@ button:focus-visible,
   height: 300px;
 }
 .map { text-align: left; }
-#win-status { min-height: 2em; font-weight: 600; }
+#win-status { font-weight: 600; }
+/* the status line takes no space until it has something to say */
+.actions:has(+ #win-status:empty) { margin-bottom: 0; }
 
 /* Values
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -142,86 +157,54 @@ button:focus-visible,
   background-image: url('../img/values-bg.webp');
   background-size: cover;
   color: #fff;
-  padding-bottom: 5rem;
 }
 .value-heading {
-  margin-bottom: .5rem;
+  margin-bottom: var(--space-1);
   color: #11DFC7;
 }
 .value-description {
   font-weight: 400;
 }
+.value img { display: block; margin: 0 auto; }
 
-
-
-/* Bigger than 550 */
+/* Bigger than 550: text and phone side by side, phone on the band's bottom edge */
 @media (min-width: 550px) {
-  .section {
-    padding: 7rem 0;
+  .hero .row {
+    display: flex;
+    align-items: flex-end;
   }
-  .hero {
-    padding-bottom: 12rem;
+  .hero .row::after { display: none; }
+  .hero .row > .column:first-child {
+    align-self: center;
     text-align: left;
-    height: 165px;
+    padding-bottom: var(--phone-overhang);
   }
-  .phone {
-    position: absolute;
-    top: -7rem;
-    right: 3rem;
+  .hero .phone {
+    max-width: 100%;
     max-height: 362px;
-    width: auto; /* let max-height scale the width too */
-    z-index: 3;
+    margin-top: 0;
+    margin-right: 0;
   }
   #scan-map { height: 340px; }
-  .hero-heading {
-    font-size: 2.4rem;
-  }
+  .hero-heading { font-size: 2.4rem; }
 }
 
 /* Bigger than 750 */
 @media (min-width: 750px) {
-  .hero {
-    height: 190px;
-  }
-  .hero-heading {
-    font-size: 2.6rem;
-  }
-  .section {
-    padding: 8rem 0;
-  }
-  .hero {
-    padding: 16rem 0 14rem;
-  }
+  .hero-heading { font-size: 2.6rem; }
   .section-description {
     max-width: 60%;
     margin-left: auto;
     margin-right: auto;
   }
-  .phone {
-    top: -14rem;
-    right: 5rem;
-    max-height: 510px;
-  }
+  .hero .phone { max-height: 510px; }
 }
 
 /* Bigger than 1000 */
 @media (min-width: 1000px) {
-  .section {
-    padding: 9rem 0;
-  }
-  .hero {
-    padding: 22rem 0;
-  }
-  .hero-button {
-    font-size: 3.0rem;
-  }
-  .hero-heading {
-    font-size: 3.0rem;
-  }
-  .phone {
-    top: -16rem;
-    max-height: 615px;
-  }
+  .hero-button { font-size: 3.0rem; }
+  .hero-heading { font-size: 3.0rem; }
+  .hero .phone { max-height: 560px; }
 }
 
 /* Share and footer
@@ -260,10 +243,15 @@ button:focus-visible,
 .leaflet-container .leaflet-control-attribution { font-size: 12px; line-height: 1.5; }
 .leaflet-container .leaflet-control-attribution a { display: inline-block; padding: 2px 0; }
 
+@media (min-width: 750px) {
+  :root { --section-space: var(--space-6); }
+}
+
 /* Find, scan, win: a gap under each photo when they stack on phones,
    and captions held to two lines in a row so the photos line up */
-.value img { margin-bottom: var(--space-5); }
+@media (max-width: 549px) {
+  .value + .value { margin-top: var(--space-5); }
+}
 @media (min-width: 550px) {
-  .value img { margin-bottom: 0; }
   .value-description { min-height: 3.2em; }
 }

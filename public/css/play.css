@@ -1,3 +1,9 @@
+@font-face {
+  font-family: 'Raleway';
+  font-weight: 300 600;
+  font-display: swap;
+  src: url('../fonts/raleway-latin.woff2') format('woff2');
+}
 :root {
   color-scheme: only light;
   --ink: #fff;
@@ -10,7 +16,7 @@ html { background: #000; overflow: hidden; }
 main { position: fixed; inset: 0; overflow: hidden; }
 /* AR.js writes the camera's size onto <body> as inline styles; keep the page the size of the screen. */
 body { width: 100% !important; margin: 0 !important; overflow: hidden; }
-html, body { margin: 0; height: 100%; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; }
+html, body { margin: 0; height: 100%; font-family: "Raleway", "Helvetica Neue", Helvetica, Arial, sans-serif; /* same face as the home page */ }
 .visually-hidden {
   position: absolute; width: 1px; height: 1px; overflow: hidden;
   clip: rect(0 0 0 0); white-space: nowrap;
