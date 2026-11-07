@@ -141,3 +141,16 @@ test('security.txt has not expired', async () => {
   const expires = readFileSync('public/.well-known/security.txt', 'utf8').match(/^Expires: (.+)$/m)[1];
   expect(new Date(expires).getTime()).toBeGreaterThan(Date.now() + 30 * 24 * 60 * 60 * 1000);
 });
+
+test('photos keep their proportions at every width', async ({ page }) => {
+  await page.goto('/');
+  const images = page.locator('img');
+  for (const img of await images.all()) {
+    await img.scrollIntoViewIfNeeded();
+    const ratios = await img.evaluate((el) => el.complete && el.naturalWidth
+      ? { rendered: el.clientWidth / el.clientHeight, natural: el.naturalWidth / el.naturalHeight, src: el.src }
+      : null);
+    if (!ratios || !ratios.rendered) continue;
+    expect(Math.abs(ratios.rendered - ratios.natural), ratios.src).toBeLessThan(0.02);
+  }
+});

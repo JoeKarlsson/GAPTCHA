@@ -25,6 +25,7 @@ body {
   font-size: 1.7rem; /* 17px: phones never get text under 16px */
 }
 h1, h2, h3, h4, h5, h6 { letter-spacing: normal; }
+img { max-width: 100%; height: auto; } /* keep photo proportions when width/height attributes are set */
 .button,
 button {
   border-radius: 100px;
@@ -158,6 +159,7 @@ button:focus-visible,
     top: -7rem;
     right: 3rem;
     max-height: 362px;
+    width: auto; /* let max-height scale the width too */
     z-index: 3;
   }
   #scan-map { height: 340px; }
