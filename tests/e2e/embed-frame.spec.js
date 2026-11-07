@@ -4,7 +4,12 @@ import { watchEmbedDemo } from './embed-helpers.js';
 // The harness page comes from route(), which Chromium treats as a public site, and its Local
 // Network Access check then refuses to frame localhost. joekarlsson.com framing
 // gaptcha.joekarlsson.com is public-to-public, so the check doesn't apply there.
-test.use({ launchOptions: { args: ['--disable-features=LocalNetworkAccessChecks'] } });
+// WebKit has no such check and refuses Chromium flags, so the flag goes to Chromium only.
+test.use({
+  launchOptions: async ({ browserName }, use) => {
+    await use(browserName === 'chromium' ? { args: ['--disable-features=LocalNetworkAccessChecks'] } : {});
+  },
+});
 
 test('framed by another site, the page switches to the demo on its own', async ({ page, context }) => {
   await watchEmbedDemo(context);
