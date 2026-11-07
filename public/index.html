@@ -1,168 +1,165 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-page="home">
 <head>
-  <meta charset="UTF-8">
-  <title>GAPTCHA</title>
-  <!-- Basic Page Needs
-  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
   <meta charset="utf-8">
-  <title>GAPTCHA</title>
-  <meta name="description" content="">
-  <meta name="author" content="Sean Nakamura, Tony Gaskell, Brandon Baris, Joe Karlsson">
-
-  <!-- Mobile Specific Metas
-  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://plausible.joekarlsson.io; style-src 'self' https://cdn.jsdelivr.net https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https://tile.openstreetmap.org; connect-src 'self' https://plausible.joekarlsson.io; base-uri 'self'; form-action 'none'; object-src 'none'">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <title>GAPTCHA: an augmented reality scavenger hunt</title>
+  <meta name="description" content="An augmented reality scavenger hunt: scan printed markers to get bearings to a hidden checkpoint, then go find it.">
+  <meta name="author" content="Joe Karlsson">
+  <link rel="canonical" href="https://gaptcha.joekarlsson.com/">
+  <meta name="color-scheme" content="only light">
+  <meta name="darkreader-lock">
+  <meta name="theme-color" content="#11DFC7">
 
-  <!-- OG Meta Data
-  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
-  <meta property="og:description" content="Gaptcha captcha point. Geo-Augmented Place That Checks Authentecity">
-  <meta property="og:title" content="GAPTCHA">
-  <meta property="og:url" content="https://gaptcha.herokuapp.com/">
   <meta property="og:type" content="website">
-  <meta property="og:site_name" content="GAPTCHA" />
-  <meta property="og:image" content="/img/GAPTCHA.png">
-  <link rel="author" href="https://plus.google.com/u/0/+JoeKarlsson/posts">
+  <meta property="og:site_name" content="GAPTCHA">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:url" content="https://gaptcha.joekarlsson.com/">
+  <meta property="og:title" content="GAPTCHA: an augmented reality scavenger hunt">
+  <meta property="og:description" content="An augmented reality scavenger hunt: scan printed markers to get bearings to a hidden checkpoint, then go find it.">
+  <meta property="og:image" content="https://gaptcha.joekarlsson.com/img/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="GAPTCHA: Find. Scan. Win!">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:description" content="Geo-Augmented Place That Checks Authentecity">
-  <meta name="twitter:title" content="GAPTCHA">
+  <meta name="twitter:title" content="GAPTCHA: an augmented reality scavenger hunt">
+  <meta name="twitter:description" content="An augmented reality scavenger hunt: scan printed markers to get bearings to a hidden checkpoint, then go find it.">
+  <meta name="twitter:image" content="https://gaptcha.joekarlsson.com/img/og.png">
+  <meta name="twitter:image:alt" content="GAPTCHA: Find. Scan. Win!">
   <meta name="twitter:site" content="@joekarlsson1">
-  <meta name="twitter:image" content="/img/GAPTCHA.png">
   <meta name="twitter:creator" content="@joekarlsson1">
 
-  <!-- FONT
-  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
-  <link href="//fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css">
-
-  <!-- CSS
-  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="img/favicon-32x32.png" type="image/png" sizes="32x32">
+  <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+  <link rel="manifest" href="site.webmanifest">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;600&amp;display=swap">
   <link rel="stylesheet" href="css/normalize.css">
   <link rel="stylesheet" href="css/skeleton.css">
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" integrity="sha384-sHL9NAb7lN7rfvG5lfHpm643Xkcjzp4jFvuavGOndn6pjVqS6ny56CAt3nsEVT4H" crossorigin="anonymous">
   <link rel="stylesheet" href="css/styles.css">
+  <link rel="preload" as="image" href="img/iphone_gaptcha.png" fetchpriority="high">
 
-  <!-- Favicon
-  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
-  <link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png">
-  <link rel="icon" type="image/png" href="/img/favicon-32x32.png" sizes="32x32">
-  <link rel="icon" type="image/png" href="/img/favicon-16x16.png" sizes="16x16">
-  <link rel="manifest" href="/img/manifest.json">
-  <link rel="mask-icon" href="/img/safari-pinned-tab.svg" color="#5bbad5">
-  <link rel="shortcut icon" href="/img/favicon.ico">
-  <meta name="msapplication-config" content="/img/browserconfig.xml">
-  <meta name="theme-color" content="#ffffff">
-
-  <!-- Scripts
-  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <script src="js/analytics.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js" integrity="sha384-cxOPjt7s7Iz04uaHJceBmS+qpjv2JkIHNVcuOrM+YHwZOmJGBXI00mdUXEq65HTH" crossorigin="anonymous" defer></script>
+  <script type="module" src="js/home.js"></script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"WebApplication","name":"GAPTCHA","url":"https://gaptcha.joekarlsson.com/","applicationCategory":"GameApplication","operatingSystem":"Any (needs a camera and location)","description":"An augmented reality scavenger hunt: scan printed markers to get bearings to a hidden checkpoint, then go find it.","author":[{"@type":"Person","name":"Joe Karlsson","url":"https://www.joekarlsson.com/"},{"@type":"Person","name":"Tony Gaskell"},{"@type":"Person","name":"Sean Nakamura"},{"@type":"Person","name":"Brandon Baris"},{"@type":"Person","name":"Joelle Torneros"}],"dateCreated":"2017-03"}
+  </script>
 </head>
 <body>
-  <!-- Primary Page Layout
-    –––––––––––––––––––––––––––––––––––––––––––––––––– -->
-
-    <div class="section hero">
-      <div class="container">
-        <div class="row">
-          <div class="one-half column">
-            <h1>GAPTCHA</h1>
-            <h4 class="hero-heading">Find. Scan. Win.</h4>
-            <a class="button button-primary" href="/play"><h3 class="hero-button">Scan A Marker</h3></a>
-          </div>
-          <div class="one-half column phones">
-            <img class="phone" src="img/iphone_gaptcha.png">
-          </div>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="section hero">
+    <div class="container">
+      <div class="row">
+        <div class="one-half column">
+          <h1>GAPTCHA</h1>
+          <p class="hero-heading">Find. Scan. Win.</p>
+          <a class="button button-primary hero-button" href="play.html">Scan a marker</a>
+        </div>
+        <div class="one-half column phones">
+          <img class="phone" src="img/iphone_gaptcha.png" width="324" height="664" alt="A phone camera pointed at a GAPTCHA marker taped to a brick wall">
         </div>
       </div>
     </div>
+  </header>
 
-    <div class="section how-it-works">
+  <main id="main">
+    <section class="section how-it-works" aria-labelledby="how-heading">
       <div class="container">
-        <h3 class="section-heading">How It Works</h3>
-        <p class="section-description">Now’s your chance to discover the world all around you—so get your shoes on, step outside, and explore the world. With GAPTCHA, the augmented reality scavenger hunt, you will get out in the real world to find our hidden checkpoint!</p>
-        <a class="button button-primary" href="/play">Scan A Marker</a>
+        <h2 class="section-heading" id="how-heading">How it works</h2>
+        <p class="section-description">GAPTCHA is an augmented reality scavenger hunt. Print a marker and stick it somewhere. Scan it with your phone and an arrow appears on it, pointing toward a hidden checkpoint. Scan from a few different spots, follow where the arrows cross, and find the checkpoint.</p>
+        <p class="section-description">The original checkpoint is in Honolulu, where we built this. Anywhere else, GAPTCHA hides a checkpoint 100 to 300 meters from you the first time you scan.</p>
+        <p class="actions">
+          <a class="button button-primary" href="play.html">Scan a marker</a>
+          <a class="button" href="img/marker-gaptcha.png" download>Download the marker to print</a>
+        </p>
       </div>
-    </div>
+    </section>
 
-    <div class="section values">
+    <section class="section values" aria-label="Find, scan, win">
       <div class="container">
         <div class="row">
           <div class="one-third column value">
             <h2 class="value-heading">Find</h2>
-            <p class="value-description">Find a marker out in the real world</p>
-            <img class="u-max-full-width" src="img/find.jpg">
+            <p class="value-description">Find a marker out in the real world.</p>
+            <img class="u-max-full-width" src="img/find.jpg" width="1000" height="750" loading="lazy" decoding="async" alt="A GAPTCHA marker on a wall outdoors">
           </div>
           <div class="one-third column value">
             <h2 class="value-heading">Scan</h2>
-            <p class="value-description">Scan the marker using our web app.</p>
-            <img class="u-max-full-width" src="img/scan.jpg">
-
+            <p class="value-description">Scan the marker with your phone to get a bearing.</p>
+            <img class="u-max-full-width" src="img/scan.jpg" width="1000" height="750" loading="lazy" decoding="async" alt="Someone scanning a marker with a phone">
           </div>
           <div class="one-third column value">
             <h2 class="value-heading">Win</h2>
-            <p class="value-description">Find the virtual checkpoint and win!</p>
-            <img class="u-max-full-width" src="img/win.jpg">
-
+            <p class="value-description">Find the hidden checkpoint and win.</p>
+            <img class="u-max-full-width" src="img/win.jpg" width="1000" height="750" loading="lazy" decoding="async" alt="Celebrating at the checkpoint">
           </div>
         </div>
       </div>
-    </div>
+    </section>
 
-    <div class="section get-help">
+    <section class="section get-help" aria-labelledby="win-heading">
       <div class="container">
-        <h3 class="section-heading">Did I Win?</h3>
-        <p class="section-description">If you think you found the hidden checkpoint,</br>click the button below to see if you won!</p>
-        <a id="win-button" class="button button-primary" href="/#win">Did I Win?</a>
-        <div id="win-status"></div>
+        <h2 class="section-heading" id="win-heading">Did I win?</h2>
+        <p class="section-description">If you think you’re standing on the hidden checkpoint, tap the button. You need to be within 20 meters.</p>
+        <p class="actions">
+          <button id="win-button" class="button-primary" type="button">Did I win?</button>
+          <button id="new-hunt-button" type="button">Start a new hunt</button>
+        </p>
+        <p id="win-status" role="status" aria-live="polite"></p>
       </div>
-    </div>
+    </section>
 
-    <div class="section map">
+    <section class="section map" aria-labelledby="map-heading">
       <div class="container">
         <div class="row">
           <div class="one-half column">
-            <h3>AT&T M2X Integration</3>
-            <p class="hero-heading">We have a live feed of all the people using GAPTCHA using AT&T M2X platform.</p>
-            <a class="button button-primary" href="https://m2x.att.com/devices" target="_blank">Learn More</a>
+            <h2 class="section-heading" id="map-heading">Your scans</h2>
+            <p>The 2017 version streamed every scan to AT&amp;T M2X, which shut down in 2021. Now your scans stay in this browser and show up here.</p>
+            <p id="scan-summary"></p>
           </div>
           <div class="one-half column">
-            <div id="mapid"></div>
+            <div id="scan-map" role="region" aria-label="Map of your scans"></div>
           </div>
         </div>
       </div>
-    </div>
+    </section>
 
-
-    <div class="section values">
-      <div class="row">
-        <div class="container">
-          <div class="six columns"></div>
-        <h3 class="section-heading">Like what you see?</h3>
-        <p class="section-description">This app was developed by developers from DevLeague, Sean Nakamura, Tony Gaskell, Brandon Baris, Joe Karlsson for the 2017 ATT&T hackathon. Our code is completly open source. Feel free to check it out.</br></br>
-        <a class="button button-primary" target="_blank" href="https://github.com/thgaskell/GAPTCHA">GitHub Repo</a>
-
+    <section class="section credits" aria-labelledby="credits-heading">
+      <div class="container">
+        <h2 class="section-heading" id="credits-heading">Like what you see?</h2>
+        <p class="section-description">Sean Nakamura, Tony Gaskell, Brandon Baris, Joelle Torneros and Joe Karlsson from DevLeague built GAPTCHA for the 2017 AT&amp;T hackathon. The code is open source.</p>
+        <p class="actions">
+          <a class="button button-primary" href="https://github.com/JoeKarlsson/GAPTCHA">See the code on GitHub</a>
+        </p>
       </div>
-    </div>
+    </section>
+
+    <section class="section share" aria-labelledby="share-heading">
+      <div class="container">
+        <h2 class="section-heading" id="share-heading">Share it</h2>
+        <ul class="share-links">
+          <li><a href="https://bsky.app/intent/compose?text=GAPTCHA%3A%20an%20augmented%20reality%20scavenger%20hunt.%20Find.%20Scan.%20Win%21%20https%3A%2F%2Fgaptcha.joekarlsson.com%2F" target="_blank" rel="noopener noreferrer">Bluesky</a></li>
+          <li><a href="https://www.threads.net/intent/post?text=GAPTCHA%3A%20an%20augmented%20reality%20scavenger%20hunt.%20Find.%20Scan.%20Win%21%20https%3A%2F%2Fgaptcha.joekarlsson.com%2F" target="_blank" rel="noopener noreferrer">Threads</a></li>
+          <li><a href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fgaptcha.joekarlsson.com%2F" target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
+          <li><a href="https://www.reddit.com/submit?url=https%3A%2F%2Fgaptcha.joekarlsson.com%2F&amp;title=GAPTCHA%3A%20an%20augmented%20reality%20scavenger%20hunt.%20Find.%20Scan.%20Win%21" target="_blank" rel="noopener noreferrer">Reddit</a></li>
+          <li><a href="https://news.ycombinator.com/submitlink?u=https%3A%2F%2Fgaptcha.joekarlsson.com%2F&amp;t=GAPTCHA%3A%20an%20augmented%20reality%20scavenger%20hunt.%20Find.%20Scan.%20Win%21" target="_blank" rel="noopener noreferrer">Hacker News</a></li>
+          <li><a href="https://x.com/intent/post?url=https%3A%2F%2Fgaptcha.joekarlsson.com%2F&amp;text=GAPTCHA%3A%20an%20augmented%20reality%20scavenger%20hunt.%20Find.%20Scan.%20Win%21" target="_blank" rel="noopener noreferrer">X</a></li>
+          <li><button id="copy-link-button" type="button">Copy link</button></li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
     <div class="container">
-      <h3 class="section-heading">Plz share</h3>
-
-      <div class="entry-social">
-        <div class="fb">
-        <a href="https://www.facebook.com/sharer/sharer.php?&u=https://gaptcha.herokuapp.com/" target="_blank">Facebook</a>
-        </div>
-        <div class="twitter">
-        <a href="https://twitter.com/intent/tweet?url=https://gaptcha.herokuapp.com/" target="_blank">Twitter</a>
-        </div>
-      </div>
-
+      <p>Made in Honolulu in 2017, revived in 2026. Map data from OpenStreetMap.</p>
     </div>
-  </div>
-
-
-
-
-  <!-- End Document
-    –––––––––––––––––––––––––––––––––––––––––––––––––– -->
-
-  <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"></script>
-  <script type="text/javascript" src="/js/map.js"></script>
+  </footer>
 </body>
 </html>

@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://gaptcha.joekarlsson.com/sitemap.xml

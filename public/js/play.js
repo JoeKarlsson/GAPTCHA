@@ -1,40 +1,48 @@
-// endpoint /api/checkpoint/lat/:param/long/:param
-window.onload = function(){
-  var asset = document.querySelector('a-entity[ply-model]');
-  var hasBearings = null;
-  var bearingIncr = 0;
+import { scan, compassName } from './checkpoint.js';
 
-  var geo = navigator.geolocation;
-  geo.getCurrentPosition(function (position) {
-    sendLocation(position.coords.latitude, position.coords.longitude)
-  })
+const arrow = document.getElementById('arrow');
+const status = document.getElementById('status');
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  function sendLocation(lat, lng) {
-    var req = new XMLHttpRequest();
-    req.addEventListener('load', receiveRotation);
-    req.open('GET', `/api/checkpoint/lat/${lat}/long/${lng}`)
-    req.send();
+let hasBearing = false;
+let spinDegrees = 0;
+
+// Spin the arrow until we know where to point it (the original "leet spin").
+function spinUntilBearing() {
+  if (hasBearing) return;
+  spinDegrees = (spinDegrees + 5) % 360;
+  arrow.setAttribute('rotation', `0 ${-spinDegrees} 0`);
+  requestAnimationFrame(spinUntilBearing);
+}
+if (!reduceMotion) requestAnimationFrame(spinUntilBearing);
+
+function pointArrow(bearingDegrees) {
+  hasBearing = true;
+  arrow.setAttribute('rotation', `0 ${-Math.round(bearingDegrees)} 0`);
+}
+
+function storage() {
+  try {
+    return window.localStorage;
+  } catch {
+    status.textContent = 'This browser is blocking storage, so GAPTCHA can’t remember your hunt.';
+    throw new Error('localStorage unavailable');
   }
+}
 
-  function receiveRotation(){
-    console.log(this.responseText)
-    var response = JSON.parse(this.responseText)
-    setRotation(response.finalBearing)
-    hasBearings = true;
-  }
-
-  function setRotation(deg){
-    var bearing = -Math.floor(deg);
-    asset.setAttribute('rotation', `0 0 ${bearing}`);
-  }
-
-  function leetSpin(){
-    if (!hasBearings) {
-      bearingIncr += 5
-      asset.setAttribute('rotation', `0 0 ${-bearingIncr}`);
-      window.requestAnimationFrame(leetSpin)
-    }
-  }
-
-  window.requestAnimationFrame(leetSpin);
+if (!('geolocation' in navigator)) {
+  status.textContent = 'This browser can’t share your location, so GAPTCHA can’t point you anywhere.';
+} else {
+  navigator.geolocation.getCurrentPosition(
+    (position) => {
+      const player = { lat: position.coords.latitude, lon: position.coords.longitude };
+      const { bearingDegrees } = scan(player, storage());
+      pointArrow(bearingDegrees);
+      status.textContent = `The checkpoint is to the ${compassName(bearingDegrees)} (${Math.round(bearingDegrees)}°). Scan from somewhere else to close in.`;
+    },
+    (error) => {
+      status.textContent = `Couldn’t get your location: ${error.message}. Allow location access and reload.`;
+    },
+    { enableHighAccuracy: true, timeout: 20000 }
+  );
 }
