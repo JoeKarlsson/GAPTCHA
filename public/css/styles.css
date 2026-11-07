@@ -1,3 +1,13 @@
+/* Raleway, self-hosted: one variable latin file covers the 300, 400 and 600 weights */
+@font-face {
+  font-family: 'Raleway';
+  font-style: normal;
+  font-weight: 300 600;
+  font-display: swap;
+  src: url('../fonts/raleway-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
 /* Tokens
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
 :root {
@@ -82,7 +92,7 @@ button:focus-visible,
 /* Sections
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
 .section {
-  padding: 8rem 0 7rem;
+  padding: 6rem 0;
   text-align: center;
 }
 .section-heading,
@@ -95,7 +105,7 @@ button:focus-visible,
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
 .hero {
   background-color: var(--color-band);
-  background-image: url('../img/background.png');
+  background-image: url('../img/background.webp');
   background-blend-mode: multiply;
   background-size: cover;
   color: #fff;
@@ -129,7 +139,7 @@ button:focus-visible,
 .values {
   background-color: var(--color-band);
   background-blend-mode: multiply;
-  background-image: url('../img/values-bg.jpg');
+  background-image: url('../img/values-bg.webp');
   background-size: cover;
   color: #fff;
   padding-bottom: 5rem;
@@ -147,7 +157,7 @@ button:focus-visible,
 /* Bigger than 550 */
 @media (min-width: 550px) {
   .section {
-    padding: 12rem 0 11rem;
+    padding: 7rem 0;
   }
   .hero {
     padding-bottom: 12rem;
@@ -177,7 +187,7 @@ button:focus-visible,
     font-size: 2.6rem;
   }
   .section {
-    padding: 14rem 0 15rem;
+    padding: 8rem 0;
   }
   .hero {
     padding: 16rem 0 14rem;
@@ -197,7 +207,7 @@ button:focus-visible,
 /* Bigger than 1000 */
 @media (min-width: 1000px) {
   .section {
-    padding: 20rem 0 19rem;
+    padding: 9rem 0;
   }
   .hero {
     padding: 22rem 0;
@@ -227,8 +237,10 @@ button:focus-visible,
 .share-links li { margin: 0; }
 .share-links a {
   display: inline-block;
-  padding: var(--space-1) 0;
+  padding: var(--space-1) var(--space-1);
   min-height: 44px;
+  min-width: 44px;
+  text-align: center;
   box-sizing: border-box;
 }
 .share-links button { margin: 0; }
@@ -243,3 +255,15 @@ button:focus-visible,
 .hunter-feed { list-style: none; margin: 0 0 var(--space-2); padding: 0; }
 .hunter-feed li { margin-bottom: var(--space-1); }
 .simulated-note { font-size: 1.6rem; }
+
+/* Leaflet sizes its credit in rem-less px, but Skeleton's 62.5% root shrinks it to 7.5px */
+.leaflet-container .leaflet-control-attribution { font-size: 12px; line-height: 1.5; }
+.leaflet-container .leaflet-control-attribution a { display: inline-block; padding: 2px 0; }
+
+/* Find, scan, win: a gap under each photo when they stack on phones,
+   and captions held to two lines in a row so the photos line up */
+.value img { margin-bottom: var(--space-5); }
+@media (min-width: 550px) {
+  .value img { margin-bottom: 0; }
+  .value-description { min-height: 3.2em; }
+}

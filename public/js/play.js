@@ -32,21 +32,51 @@ function storage() {
   }
 }
 
+// A scan happens when the camera finds a marker, not when the page loads.
+// Location is fetched in advance so the bearing is ready the moment a marker shows up.
+const RESCAN_AFTER_MS = 30000; // seeing the same marker again within this window only re-points the arrow
+let player = null;
+let markerInView = false;
+let lastScanAt = -Infinity;
+let lastBearing = null;
+
+function scanNow() {
+  const now = Date.now();
+  if (lastBearing !== null && now - lastScanAt < RESCAN_AFTER_MS) {
+    pointArrow(lastBearing);
+    return;
+  }
+  const { bearingDegrees } = scan(player, storage());
+  addPlayerAttempt(storage());
+  lastScanAt = now;
+  lastBearing = bearingDegrees;
+  pointArrow(bearingDegrees);
+  status.textContent = `The checkpoint is to the ${compassName(bearingDegrees)} (${Math.round(bearingDegrees)}°). Scan another marker somewhere else to close in.`;
+}
+
+document.getElementById('marker').addEventListener('markerFound', () => {
+  markerInView = true;
+  if (player) scanNow();
+  else status.textContent = 'Marker found. Waiting for your location…';
+});
+document.getElementById('marker').addEventListener('markerLost', () => {
+  markerInView = false;
+});
+
 if (!('geolocation' in navigator)) {
   status.textContent = 'This browser can’t share your location, so GAPTCHA can’t point you anywhere.';
 } else {
-  navigator.geolocation.getCurrentPosition(
+  status.textContent = 'Point your camera at a GAPTCHA marker.';
+  navigator.geolocation.watchPosition(
     (position) => {
-      const player = { lat: position.coords.latitude, lon: position.coords.longitude };
-      const { bearingDegrees } = scan(player, storage());
-      addPlayerAttempt(storage());
-      pointArrow(bearingDegrees);
-      status.textContent = `The checkpoint is to the ${compassName(bearingDegrees)} (${Math.round(bearingDegrees)}°). Scan from somewhere else to close in.`;
+      const firstFix = player === null;
+      player = { lat: position.coords.latitude, lon: position.coords.longitude };
+      if (firstFix && markerInView) scanNow();
     },
     (error) => {
       status.textContent = `Couldn’t get your location: ${error.message}. Allow location access and reload.`;
     },
-    { enableHighAccuracy: true, timeout: 20000 }
+    { enableHighAccuracy: true, timeout: 20000, maximumAge: 10000 }
   );
 }
 

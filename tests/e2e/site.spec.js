@@ -55,10 +55,17 @@ for (const path of ['/', '/404.html']) {
   });
 }
 
+// Stands in for AR.js seeing the printed marker (the camera path is covered in ar.spec.js).
+async function findMarker(page) {
+  await expect(page.locator('#status')).not.toHaveText('');
+  await page.evaluate(() => document.getElementById('marker').dispatchEvent(new CustomEvent('markerFound')));
+}
+
 test('play page status panel has no axe violations', async ({ page, context }) => {
   await context.grantPermissions(['geolocation']);
   await context.setGeolocation(HONOLULU_CHECKPOINT);
   await page.goto('/play.html');
+  await findMarker(page);
   await expect(page.locator('#status')).toContainText('checkpoint is to the');
   const results = await new AxeBuilder({ page })
     .withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa'])
@@ -83,6 +90,7 @@ test('players far from Honolulu get a demo checkpoint and their scans land on th
   await context.grantPermissions(['geolocation']);
   await context.setGeolocation({ latitude: 44.9778, longitude: -93.265 });
   await page.goto('/play.html');
+  await findMarker(page);
   await expect(page.locator('#status')).toContainText('checkpoint is to the');
   const checkpoint = await page.evaluate(() => JSON.parse(localStorage.getItem('gaptcha-checkpoint')));
   expect(Math.abs(checkpoint.lat - 44.9778)).toBeLessThan(0.01);
@@ -176,4 +184,17 @@ test('your own win uses the shared attempt counter and resets it', async ({ page
   await page.goto('/');
   await page.getByRole('button', { name: 'Did I win?' }).click();
   await expect(page.locator('#win-status')).toHaveText('GOT ’EM! It took a total of 42 attempts since it was last found.');
+});
+
+test('the play page doesn’t scan until a marker is in view', async ({ page, context }) => {
+  await context.grantPermissions(['geolocation']);
+  await context.setGeolocation({ latitude: 44.9778, longitude: -93.265 });
+  await page.goto('/play.html');
+  await expect(page.locator('#status')).toHaveText('Point your camera at a GAPTCHA marker.');
+  await page.waitForTimeout(1500);
+  await expect(page.locator('#status')).toHaveText('Point your camera at a GAPTCHA marker.');
+  expect(await page.evaluate(() => localStorage.getItem('gaptcha-scans'))).toBeNull();
+
+  await findMarker(page);
+  await expect(page.locator('#status')).toContainText('checkpoint is to the');
 });

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://plausible.joekarlsson.io; style-src 'self' https://cdn.jsdelivr.net https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https://tile.openstreetmap.org; connect-src 'self' https://plausible.joekarlsson.io; base-uri 'self'; form-action 'none'; object-src 'none'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://plausible.joekarlsson.io; style-src 'self' https://cdn.jsdelivr.net; font-src 'self'; img-src 'self' data: https://tile.openstreetmap.org; connect-src 'self' https://plausible.joekarlsson.io; base-uri 'self'; form-action 'none'; object-src 'none'">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <title>GAPTCHA: an augmented reality scavenger hunt</title>
   <meta name="description" content="An augmented reality scavenger hunt: scan printed markers to get bearings to a hidden checkpoint, then go find it.">
@@ -22,12 +22,12 @@
   <meta property="og:image" content="https://gaptcha.joekarlsson.com/img/og.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="GAPTCHA: Find. Scan. Win!">
+  <meta property="og:image:alt" content="GAPTCHA: Find, scan, win">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="GAPTCHA: an augmented reality scavenger hunt">
   <meta name="twitter:description" content="An augmented reality scavenger hunt: scan printed markers to get bearings to a hidden checkpoint, then go find it.">
   <meta name="twitter:image" content="https://gaptcha.joekarlsson.com/img/og.png">
-  <meta name="twitter:image:alt" content="GAPTCHA: Find. Scan. Win!">
+  <meta name="twitter:image:alt" content="GAPTCHA: Find, scan, win">
   <meta name="twitter:site" content="@joekarlsson1">
   <meta name="twitter:creator" content="@joekarlsson1">
 
@@ -35,14 +35,12 @@
   <link rel="icon" href="img/favicon-32x32.png" type="image/png" sizes="32x32">
   <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
   <link rel="manifest" href="site.webmanifest">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;600&amp;display=swap">
   <link rel="stylesheet" href="css/normalize.css">
   <link rel="stylesheet" href="css/skeleton.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" integrity="sha384-sHL9NAb7lN7rfvG5lfHpm643Xkcjzp4jFvuavGOndn6pjVqS6ny56CAt3nsEVT4H" crossorigin="anonymous">
   <link rel="stylesheet" href="css/styles.css">
-  <link rel="preload" as="image" href="img/iphone_gaptcha.png" fetchpriority="high">
+  <link rel="preload" as="image" href="img/background.webp" type="image/webp" fetchpriority="high">
+  <link rel="preload" as="font" href="fonts/raleway-latin.woff2" type="font/woff2" crossorigin>
 
   <script src="js/analytics.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js" integrity="sha384-cxOPjt7s7Iz04uaHJceBmS+qpjv2JkIHNVcuOrM+YHwZOmJGBXI00mdUXEq65HTH" crossorigin="anonymous" defer></script>
@@ -58,7 +56,7 @@
       <div class="row">
         <div class="one-half column">
           <h1>GAPTCHA</h1>
-          <p class="hero-heading">Find. Scan. Win.</p>
+          <p class="hero-heading">Find, scan, win</p>
           <a class="button button-primary hero-button" href="play.html">Scan a marker</a>
         </div>
         <div class="one-half column phones">
@@ -123,7 +121,7 @@
             <p>The 2017 version streamed every scan to AT&amp;T M2X, which shut down in 2021. Now your scans stay in this browser and show up here, next to the other hunters.</p>
             <p id="scan-summary"></p>
             <p id="hunter-stats" class="hunter-stats"></p>
-            <ul id="hunter-feed" class="hunter-feed" role="log" aria-live="polite" aria-label="Other hunters"></ul>
+            <div role="log" aria-live="polite" aria-label="Other hunters"><ul id="hunter-feed" class="hunter-feed"></ul></div>
             <p class="simulated-note">Other hunters are simulated in this demo.</p>
           </div>
           <div class="one-half column">
@@ -147,12 +145,12 @@
       <div class="container">
         <h2 class="section-heading" id="share-heading">Share it</h2>
         <ul class="share-links">
-          <li><a href="https://bsky.app/intent/compose?text=GAPTCHA%3A%20an%20augmented%20reality%20scavenger%20hunt.%20Find.%20Scan.%20Win%21%20https%3A%2F%2Fgaptcha.joekarlsson.com%2F" target="_blank" rel="noopener noreferrer">Bluesky</a></li>
-          <li><a href="https://www.threads.net/intent/post?text=GAPTCHA%3A%20an%20augmented%20reality%20scavenger%20hunt.%20Find.%20Scan.%20Win%21%20https%3A%2F%2Fgaptcha.joekarlsson.com%2F" target="_blank" rel="noopener noreferrer">Threads</a></li>
+          <li><a href="https://bsky.app/intent/compose?text=GAPTCHA%3A%20an%20augmented%20reality%20scavenger%20hunt.%20Find%2C%20scan%2C%20win%21%20https%3A%2F%2Fgaptcha.joekarlsson.com%2F" target="_blank" rel="noopener noreferrer">Bluesky</a></li>
+          <li><a href="https://www.threads.net/intent/post?text=GAPTCHA%3A%20an%20augmented%20reality%20scavenger%20hunt.%20Find%2C%20scan%2C%20win%21%20https%3A%2F%2Fgaptcha.joekarlsson.com%2F" target="_blank" rel="noopener noreferrer">Threads</a></li>
           <li><a href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fgaptcha.joekarlsson.com%2F" target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
-          <li><a href="https://www.reddit.com/submit?url=https%3A%2F%2Fgaptcha.joekarlsson.com%2F&amp;title=GAPTCHA%3A%20an%20augmented%20reality%20scavenger%20hunt.%20Find.%20Scan.%20Win%21" target="_blank" rel="noopener noreferrer">Reddit</a></li>
-          <li><a href="https://news.ycombinator.com/submitlink?u=https%3A%2F%2Fgaptcha.joekarlsson.com%2F&amp;t=GAPTCHA%3A%20an%20augmented%20reality%20scavenger%20hunt.%20Find.%20Scan.%20Win%21" target="_blank" rel="noopener noreferrer">Hacker News</a></li>
-          <li><a href="https://x.com/intent/post?url=https%3A%2F%2Fgaptcha.joekarlsson.com%2F&amp;text=GAPTCHA%3A%20an%20augmented%20reality%20scavenger%20hunt.%20Find.%20Scan.%20Win%21" target="_blank" rel="noopener noreferrer">X</a></li>
+          <li><a href="https://www.reddit.com/submit?url=https%3A%2F%2Fgaptcha.joekarlsson.com%2F&amp;title=GAPTCHA%3A%20an%20augmented%20reality%20scavenger%20hunt.%20Find%2C%20scan%2C%20win%21" target="_blank" rel="noopener noreferrer">Reddit</a></li>
+          <li><a href="https://news.ycombinator.com/submitlink?u=https%3A%2F%2Fgaptcha.joekarlsson.com%2F&amp;t=GAPTCHA%3A%20an%20augmented%20reality%20scavenger%20hunt.%20Find%2C%20scan%2C%20win%21" target="_blank" rel="noopener noreferrer">Hacker News</a></li>
+          <li><a href="https://x.com/intent/post?url=https%3A%2F%2Fgaptcha.joekarlsson.com%2F&amp;text=GAPTCHA%3A%20an%20augmented%20reality%20scavenger%20hunt.%20Find%2C%20scan%2C%20win%21" target="_blank" rel="noopener noreferrer">X</a></li>
           <li><button id="copy-link-button" type="button">Copy link</button></li>
         </ul>
       </div>
