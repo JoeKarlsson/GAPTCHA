@@ -5,7 +5,8 @@
   "description": "Geo-Augmented Place That Checks Authenticity: an augmented reality scavenger hunt",
   "type": "module",
   "scripts": {
-    "serve": "python3 -m http.server 4791 --directory public",
+    "build": "node scripts/build.mjs",
+    "serve": "npm run build && python3 -m http.server 4791 --directory dist",
     "test": "node --test 'tests/unit/*.test.mjs'",
     "test:e2e": "playwright test"
   },

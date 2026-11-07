@@ -231,3 +231,13 @@ test('every section is the same distance from the next', async ({ page }, testIn
     expect(Math.max(...gaps) - Math.min(...gaps), `gaps at ${width}px: ${gaps.join(', ')}`).toBeLessThanOrEqual(4);
   }
 });
+
+test('every local CSS and JS URL carries a content hash', async ({ page }) => {
+  for (const path of ['/', '/play.html', '/404.html']) {
+    await page.goto(path);
+    const urls = await page.$$eval('link[rel=stylesheet][href], script[src]', (els) =>
+      els.map((el) => el.getAttribute('href') ?? el.getAttribute('src')).filter((url) => !/^https?:/.test(url)));
+    expect(urls.length, path).toBeGreaterThan(0);
+    for (const url of urls) expect(url, `${path} ${url}`).toMatch(/\?v=[0-9a-f]{10}$/);
+  }
+});

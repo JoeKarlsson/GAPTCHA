@@ -8,7 +8,7 @@ export default defineConfig({
   reporter: process.env.CI ? 'github' : 'list',
   use: { baseURL: 'http://localhost:4791' },
   webServer: {
-    command: 'python3 -m http.server 4791 --directory public',
+    command: 'node scripts/build.mjs && python3 -m http.server 4791 --directory dist',
     url: 'http://localhost:4791/',
     reuseExistingServer: false,
     stdout: 'ignore',

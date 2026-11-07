@@ -39,7 +39,7 @@ node scripts/render-og.mjs  # redraws the 1200x630 share card, public/img/og.png
 
 After changing the share card, bump the `?v=` on the `og:image` URLs so networks fetch the new one.
 
-Pushing to `master` runs the tests and deploys `public/` to GitHub Pages.
+Pushing to `master` runs the tests, builds `dist/` with `node scripts/build.mjs` (a copy of `public/` where every local CSS and JS URL carries a content hash, so a deploy never serves new HTML with a stale cached script), and deploys `dist/` to GitHub Pages.
 
 ## Credits
 
