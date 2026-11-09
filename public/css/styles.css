@@ -300,3 +300,8 @@ button:focus-visible,
   [data-embed] #demo .column:last-child { flex: 1 1 0; min-width: 0; }
   [data-embed] #demo .column:last-child { align-self: center; }
 }
+
+/* About
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+.about .container > p:not(.actions) { max-width: 65ch; margin-inline: auto; text-align: left; }
+.about h2 { margin-top: var(--space-4); }

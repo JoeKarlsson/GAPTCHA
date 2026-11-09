@@ -4,6 +4,14 @@
 
 An augmented reality scavenger hunt. Play it at **https://gaptcha.joekarlsson.com**.
 
+More about it, with how it works, on [its page on joekarlsson.com](https://www.joekarlsson.com/work/gaptcha/).
+
+![GAPTCHA's demo playing itself: a hunter near the Honolulu checkpoint scans three markers, dashed lines from each marker cross on the map, the hunter heads to where they cross and the page says GOT 'EM, while a feed lists the simulated hunters' scans](.github/readme/2026-11-recording.gif)
+
+What GAPTCHA looked like in November 2026, recorded for [its page on joekarlsson.com](https://www.joekarlsson.com/work/gaptcha/). The full-quality video is [2026-11-recording.mp4](.github/readme/2026-11-recording.mp4).
+
+![The GAPTCHA homepage: "GAPTCHA, Find. Scan. Win." and a Scan a Marker button over a green-tinted brick wall, next to an iPhone showing a GAPTCHA marker](.github/readme/2026-11-home.webp)
+
 ![marker-gaptcha](public/img/marker-gaptcha.png)
 
 ## How it works
@@ -22,6 +30,14 @@ There's no server, so the other players are made up. `public/js/simulated-player
 ### Embedded demo
 
 Inside an iframe (or with `?embed` in the URL), the home page swaps itself for a demo that plays on its own: a hunter near the original Honolulu checkpoint scans three markers, follows where the arrows cross, misses once, wins, and starts over, next to the simulated hunters feed. It never asks for location or the camera, and it keeps everything in memory, so it can't touch a real player's saved hunt. `public/js/embed-flag.js` turns it on before the page paints; the hunt itself is `public/js/demo-steps.js` (deterministic, unit-tested) and `public/js/embed-demo.js`. Links to the game open the real site in a new tab.
+
+## At the 2017 hackathon
+
+![Testing GAPTCHA at a hackathon table: Brandon Baris, grinning in a red shirt, holds out a phone showing the camera view while a teammate behind him holds up a phone with a GAPTCHA marker and another phone running the AR view, with laptops and other teams all around the cafeteria](.github/readme/2017-hackathon-testing.webp)
+
+![A finger pointing at a printed GAPTCHA marker on a concrete floor: a black square with a black triangle in the corner and gaptcha.herokuapp.com printed underneath](public/img/find.jpg)
+
+![Two people jumping in the air with confetti falling in a school cafeteria full of hackathon tables, an AT&T "Mobilizing Your World" banner behind them](public/img/win.jpg)
 
 ## What changed in 2026
 

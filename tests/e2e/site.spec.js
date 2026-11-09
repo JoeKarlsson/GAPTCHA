@@ -3,7 +3,7 @@ import AxeBuilder from '@axe-core/playwright';
 import { readFileSync, readdirSync } from 'node:fs';
 import { watchEmbedDemo } from './embed-helpers.js';
 
-const PAGES = ['/', '/play.html', '/404.html'];
+const PAGES = ['/', '/play.html', '/about.html', '/404.html'];
 const HONOLULU_CHECKPOINT = { latitude: 21.285471, longitude: -157.807362 };
 
 // Fail on console errors and failed requests. The play page asks for the camera,
@@ -44,7 +44,7 @@ for (const path of PAGES) {
   });
 }
 
-for (const path of ['/', '/404.html']) {
+for (const path of ['/', '/about.html', '/404.html']) {
   test(`${path} has no axe violations`, async ({ page }) => {
     await page.goto(path);
     await page.waitForLoadState('networkidle');
@@ -234,7 +234,7 @@ test('every section is the same distance from the next', async ({ page }, testIn
 });
 
 test('every local CSS and JS URL carries a content hash', async ({ page }) => {
-  for (const path of ['/', '/play.html', '/404.html']) {
+  for (const path of ['/', '/play.html', '/about.html', '/404.html']) {
     await page.goto(path);
     const urls = await page.$$eval('link[rel=stylesheet][href], script[src]', (els) =>
       els.map((el) => el.getAttribute('href') ?? el.getAttribute('src')).filter((url) => !/^https?:/.test(url)));
