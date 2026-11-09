@@ -7,7 +7,7 @@
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <title>About GAPTCHA</title>
   <link rel="canonical" href="https://gaptcha.joekarlsson.com/about.html">
-  <meta name="description" content="How four of us from DevLeague built GAPTCHA, an augmented reality scavenger hunt, at a 2017 hackathon, and how it works now.">
+  <meta name="description" content="How five of us from DevLeague built GAPTCHA, an augmented reality scavenger hunt, at a 2017 hackathon, and how it works now.">
   <meta name="author" content="Joe Karlsson">
     <meta name="color-scheme" content="only light">
   <meta name="darkreader-lock">
@@ -46,7 +46,7 @@
   <main id="main" class="section about">
     <div class="container">
       <h1>About GAPTCHA</h1>
-      <p>GAPTCHA was an augmented reality scavenger hunt that four of us from DevLeague built at AT&amp;T&rsquo;s hackathon in Honolulu in March 2017: Sean Nakamura, Tony Gaskell, Brandon Baris and me. The name stands for Geo-Augmented Place That Checks Authenticity.</p>
+      <p>GAPTCHA was an augmented reality scavenger hunt that five of us from DevLeague built at AT&amp;T&rsquo;s hackathon in Honolulu in March 2017: Sean Nakamura, Tony Gaskell, Brandon Baris, Joelle Torneros and me. The name stands for Geo-Augmented Place That Checks Authenticity.</p>
       <p>We printed square markers and left them around for people to find. Scan one with the web app and a green 3D arrow shows up over your camera view, pointing at a hidden checkpoint. An arrow gives you a direction but not a distance, so the idea was to collect bearings from a few markers and walk to where they cross. When you think you&rsquo;re standing on it, you tap Did I Win.</p>
       <p>My part was the server, the direction math and the homepage. I stubbed out the Express server and wrote the route that takes your phone&rsquo;s latitude and longitude and works out the bearing to the checkpoint with the Vincenty formula. I also got the live map pulling from AT&amp;T M2X, which tracked everyone playing. The checkpoint&rsquo;s location came from an M2X device, so it could move during the game. Get within 20 meters of it and the app tells you how many tries everyone took since the last win.</p>
       <p>The Heroku app went down years ago, and AT&amp;T shut M2X down in 2021. In November 2026 I moved the checkpoint logic into the browser and put it back up at gaptcha.joekarlsson.com. Near the original spot in Honolulu you hunt the hackathon checkpoint. Anywhere else, it hides a demo checkpoint 100 to 300 meters from you. A scan only counts when the camera sees a printed marker, your scans stay in your browser instead of going to M2X, and a live feed shows simulated hunters playing alongside you.</p>
