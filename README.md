@@ -1,14 +1,13 @@
 # GAPTCHA
 
-> Geo-Augmented Place That Checks Authenticity
-
-GAPTCHA is an augmented reality scavenger hunt we built at the 2017 AT&T
-hackathon in Honolulu. Scan a printed marker and an arrow points toward a
-hidden checkpoint; scan a few and walk to where the arrows cross. This repo is
-the whole game, a static site. Play it at
-[gaptcha.joekarlsson.com](https://gaptcha.joekarlsson.com).
-
 ![GAPTCHA's demo playing itself: a hunter near the Honolulu checkpoint scans three markers, dashed lines from each marker cross on the map, the hunter heads to where they cross and the page says GOT 'EM, while a feed lists the simulated hunters' scans](.github/readme/2026-11-recording.gif)
+
+GAPTCHA (Geo-Augmented Place That Checks Authenticity) is an augmented reality
+scavenger hunt five of us from DevLeague built at the 2017 AT&T hackathon in
+Honolulu. Scan a printed marker and an arrow points toward a hidden checkpoint.
+Scan a few and walk to where the arrows cross.
+
+[Play it at gaptcha.joekarlsson.com](https://gaptcha.joekarlsson.com)
 
 ## Quick start
 
