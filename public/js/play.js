@@ -46,8 +46,9 @@ function scanNow() {
     pointArrow(lastBearing);
     return;
   }
-  const { bearingDegrees } = scan(player, storage());
+  const { bearingDegrees, isDemo } = scan(player, storage());
   addPlayerAttempt(storage());
+  window.plausible('Scan', { props: { demo: isDemo } });
   lastScanAt = now;
   lastBearing = bearingDegrees;
   pointArrow(bearingDegrees);
@@ -74,6 +75,7 @@ if (!('geolocation' in navigator)) {
       if (firstFix && markerInView) scanNow();
     },
     (error) => {
+      if (error.code === error.PERMISSION_DENIED) window.plausible('Location Denied');
       status.textContent = `Couldn’t get your location: ${error.message}. Allow location access and reload.`;
     },
     { enableHighAccuracy: true, timeout: 20000, maximumAge: 10000 }

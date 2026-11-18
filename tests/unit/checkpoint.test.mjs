@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
-  distanceAndBearing, destinationPoint, compassName, currentCheckpoint, tryCapture, ORIGINAL_CHECKPOINT,
+  distanceAndBearing, destinationPoint, compassName, currentCheckpoint, tryCapture, scan, ORIGINAL_CHECKPOINT,
 } from '../../public/js/checkpoint.js';
 
 function memoryStorage() {
@@ -54,4 +54,10 @@ test('capture succeeds inside 20 m, then a new hunt starts', () => {
   assert.equal(result.captured, true);
   assert.equal(result.attempts, 2);
   assert.equal(storage.getItem('gaptcha-attempts'), '0');
+});
+
+test('a scan says whether it points at a demo checkpoint', () => {
+  const storage = memoryStorage();
+  assert.equal(scan({ lat: 21.29, lon: -157.81 }, storage).isDemo, false);
+  assert.equal(scan({ lat: 44.9778, lon: -93.265 }, storage).isDemo, true);
 });

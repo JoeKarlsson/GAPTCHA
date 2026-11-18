@@ -37,6 +37,7 @@ function startFullPage() {
         const result = tryCapture(player, storage());
         // The win message counts every hunter's attempts, like the 2017 version did.
         const sharedAttempts = addPlayerAttempt(storage());
+        window.plausible('Capture Attempt', { props: { result: result.captured ? 'captured' : 'missed' } });
         if (result.captured) {
           resetAttempts(storage());
           winStatus.textContent = `GOT ’EM! It took a total of ${sharedAttempts} attempts since it was last found.`;
@@ -53,6 +54,7 @@ function startFullPage() {
 
   newHuntButton.addEventListener('click', () => {
     startNewHunt(storage());
+    window.plausible('New Hunt');
     winStatus.textContent = 'Done. Your next scan hides a new checkpoint near you.';
   });
 
@@ -114,7 +116,13 @@ function startFullPage() {
 
   const copyLinkButton = document.getElementById('copy-link-button');
   copyLinkButton.addEventListener('click', async () => {
-    await navigator.clipboard.writeText('https://gaptcha.joekarlsson.com/');
+    try {
+      await navigator.clipboard.writeText('https://gaptcha.joekarlsson.com/');
+    } catch (error) {
+      copyLinkButton.textContent = `Couldn’t copy (${error.message}): gaptcha.joekarlsson.com`;
+      return;
+    }
     copyLinkButton.textContent = 'Link copied';
+    window.plausible('Share', { props: { method: 'copy' } });
   });
 }

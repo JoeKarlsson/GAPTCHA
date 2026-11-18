@@ -105,7 +105,8 @@ export function scan(player, storage, now = Date.now()) {
   const scans = readJson(storage, STORAGE_KEYS.scans, []);
   scans.push({ lat: player.lat, lon: player.lon, timestamp: now });
   storage.setItem(STORAGE_KEYS.scans, JSON.stringify(scans.slice(-MAX_SAVED_SCANS)));
-  return distanceAndBearing(player, currentCheckpoint(player, storage));
+  const checkpoint = currentCheckpoint(player, storage);
+  return { ...distanceAndBearing(player, checkpoint), isDemo: checkpoint.isDemo };
 }
 
 // Replaces GET /api/checkpoint/capture/lat/:lat/long/:lon.
