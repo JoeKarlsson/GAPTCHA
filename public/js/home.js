@@ -1,6 +1,6 @@
 import { tryCapture, startNewHunt, savedScans, knownCheckpoint } from './checkpoint.js';
 import { addPlayerAttempt, resetAttempts } from './simulated-players.js';
-import { mountHunterFeed } from './hunter-feed.js';
+import { mountHunterFeed, wirePauseButton } from './hunter-feed.js';
 import { loadLeaflet, OSM_TILES, OSM_ATTRIBUTION } from './leaflet-loader.js';
 
 // Framed (or ?embed): js/embed-flag.js has already swapped the page for a demo that plays itself
@@ -76,7 +76,7 @@ function startFullPage() {
 
   function drawHunterScan(event) {
     const dot = window.L.circleMarker([event.position.lat, event.position.lon], {
-      radius: 6, color: '#075e55', weight: 2, fillColor: '#fff', fillOpacity: 1, className: 'hunter-dot',
+      radius: 6, color: '#000', weight: 2, fillColor: '#fff', fillOpacity: 1, className: 'hunter-dot',
     }).bindPopup(`${event.handle} (simulated)`).addTo(map);
     hunterDots.push(dot);
     if (hunterDots.length > MAX_HUNTER_DOTS) hunterDots.shift().remove();
@@ -86,7 +86,7 @@ function startFullPage() {
     map = window.L.map(mapElement, { scrollWheelZoom: false }).setView([center.lat, center.lon], 15);
     window.L.tileLayer(OSM_TILES, { maxZoom: 19, attribution: OSM_ATTRIBUTION }).addTo(map);
     for (const point of scans) {
-      window.L.circleMarker([point.lat, point.lon], { radius: 8, color: '#0b7f72', fillColor: '#11DFC7', fillOpacity: 1, className: 'own-scan' })
+      window.L.circleMarker([point.lat, point.lon], { radius: 8, color: '#0b6e28', fillColor: '#10a63c', fillOpacity: 1, className: 'own-scan' })
         .bindPopup(`Scanned ${new Date(point.timestamp).toLocaleString()}`)
         .addTo(map);
     }
@@ -103,7 +103,7 @@ function startFullPage() {
   }, { rootMargin: '600px 0px' });
   mapObserver.observe(mapElement);
 
-  mountHunterFeed({
+  const feed = mountHunterFeed({
     list: document.getElementById('hunter-feed'),
     stats: document.getElementById('hunter-stats'),
     checkpoint,
@@ -113,16 +113,25 @@ function startFullPage() {
       else hunterScans.push(event);
     },
   });
+  wirePauseButton(document.getElementById('feed-pause-button'), { pause: feed.stop, resume: feed.resume, noun: 'feed' });
 
   const copyLinkButton = document.getElementById('copy-link-button');
+  const copyLinkStatus = document.getElementById('copy-link-status');
+  let clearCopyStatus = null;
+  // The confirmation goes in its own status element: screen readers don't reliably announce a button's own text change.
+  function showCopyStatus(text) {
+    copyLinkStatus.textContent = text;
+    clearTimeout(clearCopyStatus);
+    clearCopyStatus = setTimeout(() => { copyLinkStatus.textContent = ''; }, 4000);
+  }
   copyLinkButton.addEventListener('click', async () => {
     try {
       await navigator.clipboard.writeText('https://gaptcha.joekarlsson.com/');
     } catch (error) {
-      copyLinkButton.textContent = `Couldn’t copy (${error.message}): gaptcha.joekarlsson.com`;
+      showCopyStatus(`Couldn’t copy (${error.message}): gaptcha.joekarlsson.com`);
       return;
     }
-    copyLinkButton.textContent = 'Link copied';
+    showCopyStatus('Link copied');
     window.plausible?.('Share', { props: { method: 'copy' } });
   });
 }

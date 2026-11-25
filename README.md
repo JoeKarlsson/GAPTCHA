@@ -40,7 +40,11 @@ node scripts/render-og.mjs  # redraw the share card, public/img/og.png
 | `scripts/build.mjs` | Copies `public/` to `dist/` with content-hashed CSS and JS URLs |
 
 Gotchas: add `?simulate=fast` to a URL to speed up the simulated feed. After
-changing the share card, bump the `?v=` on the `og:image` URLs. AR runs on
+changing the share card, bump the `?v=` on the `og:image` URLs. The two fonts in
+`public/fonts/` are trimmed to the widths and weights the CSS uses (Anybody
+wdth 50-60, wght 800-900; Archivo wdth 100, wght 400-700) with
+`uvx --with brotli --from fonttools fonttools varLib.instancer`; widen
+those ranges there first if the CSS needs more. AR runs on
 A-Frame 1.7.1 and AR.js 3.4.8 from jsDelivr, pinned with SRI.
 
 Pushing to `master` runs the tests and deploys `dist/` to GitHub Pages.

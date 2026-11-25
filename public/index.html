@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://plausible.joekarlsson.io; style-src 'self' https://cdn.jsdelivr.net; font-src 'self'; img-src 'self' data: https://tile.openstreetmap.org; connect-src 'self' https://plausible.joekarlsson.io; base-uri 'self'; form-action 'none'; object-src 'none'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-kO6KuBuui0CYiLFT9tys2AQvKVyVOjYRHwblq1hdaCw=' https://cdn.jsdelivr.net https://plausible.joekarlsson.io; style-src 'self' https://cdn.jsdelivr.net; font-src 'self'; img-src 'self' data: https://tile.openstreetmap.org; connect-src 'self' https://plausible.joekarlsson.io; base-uri 'self'; form-action 'none'; object-src 'none'">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <title>GAPTCHA: an augmented reality scavenger hunt</title>
   <meta name="description" content="An augmented reality scavenger hunt: scan printed markers to get bearings to a hidden checkpoint, then go find it.">
@@ -11,7 +11,7 @@
   <link rel="canonical" href="https://gaptcha.joekarlsson.com/">
   <meta name="color-scheme" content="only light">
   <meta name="darkreader-lock">
-  <meta name="theme-color" content="#11DFC7">
+  <meta name="theme-color" content="#000000">
 
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="GAPTCHA">
@@ -19,15 +19,15 @@
   <meta property="og:url" content="https://gaptcha.joekarlsson.com/">
   <meta property="og:title" content="GAPTCHA: an augmented reality scavenger hunt">
   <meta property="og:description" content="An augmented reality scavenger hunt: scan printed markers to get bearings to a hidden checkpoint, then go find it.">
-  <meta property="og:image" content="https://gaptcha.joekarlsson.com/img/og.png?v=2">
+  <meta property="og:image" content="https://gaptcha.joekarlsson.com/img/og.png?v=3">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="GAPTCHA: Find, scan, win">
+  <meta property="og:image:alt" content="GAPTCHA: Scan markers. Walk to where the arrows cross.">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="GAPTCHA: an augmented reality scavenger hunt">
   <meta name="twitter:description" content="An augmented reality scavenger hunt: scan printed markers to get bearings to a hidden checkpoint, then go find it.">
-  <meta name="twitter:image" content="https://gaptcha.joekarlsson.com/img/og.png?v=2">
-  <meta name="twitter:image:alt" content="GAPTCHA: Find, scan, win">
+  <meta name="twitter:image" content="https://gaptcha.joekarlsson.com/img/og.png?v=3">
+  <meta name="twitter:image:alt" content="GAPTCHA: Scan markers. Walk to where the arrows cross.">
   <meta name="twitter:site" content="@joekarlsson1">
   <meta name="twitter:creator" content="@joekarlsson1">
 
@@ -35,12 +35,23 @@
   <link rel="icon" href="img/favicon-32x32.png" type="image/png" sizes="32x32">
   <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
   <link rel="manifest" href="site.webmanifest">
-  <script src="js/embed-flag.js"></script>
-  <link rel="stylesheet" href="css/normalize.css">
-  <link rel="stylesheet" href="css/skeleton.css">
+  <script>// Runs before the page paints: inside an iframe (or with ?embed) GAPTCHA shows a demo that plays
+// itself instead of the full page, and never asks for location or the camera. Framing pages like
+// joekarlsson.com block both through Permissions-Policy anyway.
+(function () {
+  var framed;
+  try {
+    framed = window.top !== window.self;
+  } catch (error) {
+    framed = true; // a cross-origin parent can make reading window.top throw
+  }
+  if (framed || new URLSearchParams(window.location.search).has('embed')) {
+    document.documentElement.setAttribute('data-embed', '');
+  }
+})();</script>
   <link rel="stylesheet" href="css/styles.css">
-  <link rel="preload" as="image" href="img/background.webp" type="image/webp" fetchpriority="high">
-  <link rel="preload" as="font" href="fonts/raleway-latin.woff2" type="font/woff2" crossorigin>
+  <link rel="preload" as="font" href="fonts/anybody-latin.woff2" type="font/woff2" crossorigin>
+  <link rel="preload" as="font" href="fonts/archivo-latin.woff2" type="font/woff2" crossorigin>
 
   <script src="js/analytics.js" defer></script>
   <script type="module" src="js/home.js"></script>
@@ -50,101 +61,96 @@
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
-  <header class="section hero">
-    <div class="container">
-      <div class="row">
-        <div class="one-half column">
-          <h1>GAPTCHA</h1>
-          <p class="hero-heading">Find, scan, win</p>
-          <a class="button button-primary hero-button" href="play.html">Scan a marker</a>
-        </div>
-        <div class="one-half column phones">
-          <img class="phone" src="img/iphone_gaptcha.webp" width="324" height="664" alt="A phone camera pointed at a GAPTCHA marker taped to a brick wall">
-        </div>
-      </div>
-    </div>
+  <header class="hero">
+    <h1>GAPTCHA</h1>
+    <nav class="hero-nav" aria-label="Site">
+      <ul>
+        <li><a href="#how-heading">How it works</a></li>
+        <li><a href="img/marker-gaptcha.png" download>Print the marker</a></li>
+        <li><a href="#map-heading">Live scans</a></li>
+        <li><a href="about.html">About</a></li>
+      </ul>
+    </nav>
+    <p class="hero-lede">An augmented reality scavenger hunt. Scan printed markers to get arrows toward a hidden checkpoint, then walk to where the arrows cross.</p>
+    <a class="hero-play" href="play.html"><span>Scan a<br>marker</span></a>
   </header>
 
   <main id="main">
     <section id="demo" class="section demo" aria-labelledby="demo-heading">
       <div class="container">
         <div class="row">
-          <div class="one-half column">
+          <div class="column">
             <h2 class="demo-heading" id="demo-heading">GAPTCHA</h2>
             <p>An augmented reality scavenger hunt. Scan printed markers to get arrows toward a hidden checkpoint, follow where the arrows cross, then check whether you found it.</p>
             <p id="demo-status" class="demo-status" role="status" aria-live="polite"></p>
             <p id="demo-hunter-stats" class="hunter-stats"></p>
-            <ul id="demo-hunter-feed" class="hunter-feed" aria-label="Other hunters"></ul>
+            <p><button id="demo-pause-button" type="button">Pause demo</button></p>
+            <ul id="demo-hunter-feed" class="hunter-feed" role="list" aria-label="Other hunters"></ul>
             <p class="simulated-note">Demo: playing itself, and the other hunters are simulated. Open <a href="https://gaptcha.joekarlsson.com/" target="_blank" rel="noopener">gaptcha.joekarlsson.com</a> on your phone to hunt for real.</p>
           </div>
-          <div class="one-half column">
+          <div class="column">
             <div id="demo-map" class="demo-map" role="region" aria-label="Map of the demo hunt: marker scans, their arrows and the checkpoint once found"></div>
           </div>
         </div>
       </div>
     </section>
 
+    <section class="section steps" aria-label="Find, scan, win">
+      <div class="container">
+        <p class="steps-words" aria-hidden="true"><span>FIND</span><span>SCAN</span><span>WIN</span></p>
+        <figure class="step step-find behind">
+          <img src="img/find.jpg" srcset="img/find-500.webp 500w, img/find-800.webp 800w, img/find.jpg 1000w" sizes="(max-width: 699px) 40vw, clamp(150px, 28vw, 400px)" width="1000" height="750" loading="lazy" decoding="async" alt="A GAPTCHA marker on the ground">
+          <figcaption>Find a marker</figcaption>
+        </figure>
+        <figure class="step step-scan">
+          <img src="img/scan.jpg" srcset="img/scan-500.webp 500w, img/scan-800.webp 800w, img/scan.jpg 1000w" sizes="(max-width: 699px) 40vw, clamp(150px, 28vw, 400px)" width="1000" height="750" loading="lazy" decoding="async" alt="Someone scanning a marker with a phone; a green arrow appears on it">
+          <figcaption>Scan it</figcaption>
+        </figure>
+        <figure class="step step-win behind">
+          <img src="img/win.jpg" srcset="img/win-500.webp 500w, img/win-800.webp 800w, img/win.jpg 1000w" sizes="(max-width: 699px) 40vw, clamp(150px, 28vw, 400px)" width="1000" height="750" loading="lazy" decoding="async" alt="Two people jumping in the air at the hackathon">
+          <figcaption>Win within 20 m</figcaption>
+        </figure>
+      </div>
+    </section>
+
     <section class="section how-it-works" aria-labelledby="how-heading">
       <div class="container">
         <h2 class="section-heading" id="how-heading">How it works</h2>
-        <p class="section-description">GAPTCHA is an augmented reality scavenger hunt. Print a marker and stick it somewhere. Scan it with your phone and an arrow appears on it, pointing toward a hidden checkpoint. Scan from a few different spots, follow where the arrows cross, and find the checkpoint.</p>
+        <p class="section-description">Print a marker and stick it somewhere. Scan it with your phone and an arrow appears on it, pointing toward a hidden checkpoint. Scan from a few different spots, follow where the arrows cross, and find the checkpoint.</p>
         <p class="section-description">The original checkpoint is in Honolulu, where we built this. Anywhere else, GAPTCHA hides a checkpoint 100 to 300 meters from you the first time you scan.</p>
         <p class="actions">
           <a class="button button-primary" href="play.html">Scan a marker</a>
-          <a class="button" href="img/marker-gaptcha.png" download>Download the marker to print</a>
+          <a class="button" href="img/marker-gaptcha.png" download>Print the marker</a>
         </p>
       </div>
     </section>
 
-    <section class="section values" aria-label="Find, scan, win">
-      <div class="container">
-        <div class="row">
-          <div class="one-third column value">
-            <h2 class="value-heading">Find</h2>
-            <p class="value-description">Find a marker out in the real world.</p>
-            <img class="u-max-full-width" src="img/find.jpg" width="1000" height="750" loading="lazy" decoding="async" alt="A GAPTCHA marker on a wall outdoors">
-          </div>
-          <div class="one-third column value">
-            <h2 class="value-heading">Scan</h2>
-            <p class="value-description">Scan the marker with your phone to get a bearing.</p>
-            <img class="u-max-full-width" src="img/scan.jpg" width="1000" height="750" loading="lazy" decoding="async" alt="Someone scanning a marker with a phone">
-          </div>
-          <div class="one-third column value">
-            <h2 class="value-heading">Win</h2>
-            <p class="value-description">Find the hidden checkpoint and win.</p>
-            <img class="u-max-full-width" src="img/win.jpg" width="1000" height="750" loading="lazy" decoding="async" alt="Celebrating at the checkpoint">
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="section get-help" aria-labelledby="win-heading">
+    <section class="section win" aria-labelledby="win-heading">
       <div class="container">
         <h2 class="section-heading" id="win-heading">Did I win?</h2>
-        <p class="section-description">If you think you’re standing on the hidden checkpoint, tap the button. You need to be within 20 meters.</p>
-        <p class="actions">
-          <button id="win-button" class="button-primary" type="button">Did I win?</button>
-          <button id="new-hunt-button" type="button">Start a new hunt</button>
-        </p>
-        <p id="win-status" role="status" aria-live="polite"></p>
+        <div>
+          <p>If you think you’re standing on the hidden checkpoint, tap the button. You need to be within 20 meters.</p>
+          <p class="actions">
+            <button id="win-button" class="button-primary" type="button">Check my spot</button>
+            <button id="new-hunt-button" type="button">Start a new hunt</button>
+          </p>
+          <p id="win-status" role="status" aria-live="polite"></p>
+        </div>
       </div>
     </section>
 
-    <section class="section map" aria-labelledby="map-heading">
+    <section class="section map feed-giant" aria-labelledby="map-heading">
       <div class="container">
-        <div class="row">
-          <div class="one-half column">
-            <h2 class="section-heading" id="map-heading">Live scans</h2>
-            <p>The 2017 version streamed every scan to AT&amp;T M2X, which shut down in 2021. Now your scans stay in this browser and show up here, next to the other hunters.</p>
-            <p id="scan-summary"></p>
-            <p id="hunter-stats" class="hunter-stats"></p>
-            <div role="log" aria-live="polite" aria-label="Other hunters"><ul id="hunter-feed" class="hunter-feed"></ul></div>
-            <p class="simulated-note">Other hunters are simulated in this demo.</p>
-          </div>
-          <div class="one-half column">
-            <div id="scan-map" role="region" aria-label="Map of your scans and other hunters’ scans"></div>
-          </div>
+        <h2 class="section-heading" id="map-heading">Live scans</h2>
+        <p class="section-description">The 2017 version streamed every scan to AT&amp;T M2X, which shut down in 2021. Now your scans stay in this browser and show up here, next to the other hunters.</p>
+        <p id="scan-summary"></p>
+        <div id="scan-map" role="region" aria-label="Map of your scans and other hunters’ scans"></div>
+        <div class="feed-controls">
+          <p id="hunter-stats" class="hunter-stats"></p>
+          <button id="feed-pause-button" type="button">Pause feed</button>
         </div>
+        <ul id="hunter-feed" class="hunter-feed" role="list" aria-label="Other hunters"></ul>
+        <p class="simulated-note">Other hunters are simulated in this demo.</p>
       </div>
     </section>
 
@@ -161,14 +167,14 @@
     <section class="section share" aria-labelledby="share-heading">
       <div class="container">
         <h2 class="section-heading" id="share-heading">Share it</h2>
-        <ul class="share-links">
+        <ul class="share-links" role="list">
           <li><a href="https://bsky.app/intent/compose?text=GAPTCHA%3A%20an%20augmented%20reality%20scavenger%20hunt.%20Find%2C%20scan%2C%20win%21%20https%3A%2F%2Fgaptcha.joekarlsson.com%2F" target="_blank" rel="noopener noreferrer">Bluesky</a></li>
           <li><a href="https://www.threads.net/intent/post?text=GAPTCHA%3A%20an%20augmented%20reality%20scavenger%20hunt.%20Find%2C%20scan%2C%20win%21%20https%3A%2F%2Fgaptcha.joekarlsson.com%2F" target="_blank" rel="noopener noreferrer">Threads</a></li>
           <li><a href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fgaptcha.joekarlsson.com%2F" target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
           <li><a href="https://www.reddit.com/submit?url=https%3A%2F%2Fgaptcha.joekarlsson.com%2F&amp;title=GAPTCHA%3A%20an%20augmented%20reality%20scavenger%20hunt.%20Find%2C%20scan%2C%20win%21" target="_blank" rel="noopener noreferrer">Reddit</a></li>
           <li><a href="https://news.ycombinator.com/submitlink?u=https%3A%2F%2Fgaptcha.joekarlsson.com%2F&amp;t=GAPTCHA%3A%20an%20augmented%20reality%20scavenger%20hunt.%20Find%2C%20scan%2C%20win%21" target="_blank" rel="noopener noreferrer">Hacker News</a></li>
           <li><a href="https://x.com/intent/post?url=https%3A%2F%2Fgaptcha.joekarlsson.com%2F&amp;text=GAPTCHA%3A%20an%20augmented%20reality%20scavenger%20hunt.%20Find%2C%20scan%2C%20win%21" target="_blank" rel="noopener noreferrer">X</a></li>
-          <li><button id="copy-link-button" type="button">Copy link</button></li>
+          <li><button id="copy-link-button" type="button">Copy link</button> <span id="copy-link-status" role="status"></span></li>
         </ul>
       </div>
     </section>

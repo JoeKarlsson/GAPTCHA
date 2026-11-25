@@ -11,7 +11,7 @@
   <meta name="author" content="Joe Karlsson">
     <meta name="color-scheme" content="only light">
   <meta name="darkreader-lock">
-  <meta name="theme-color" content="#11DFC7">
+  <meta name="theme-color" content="#000000">
 
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="GAPTCHA">
@@ -19,15 +19,15 @@
   <meta property="og:url" content="https://gaptcha.joekarlsson.com/about.html">
   <meta property="og:title" content="GAPTCHA: an augmented reality scavenger hunt">
   <meta property="og:description" content="An augmented reality scavenger hunt: scan printed markers to get bearings to a hidden checkpoint, then go find it.">
-  <meta property="og:image" content="https://gaptcha.joekarlsson.com/img/og.png?v=2">
+  <meta property="og:image" content="https://gaptcha.joekarlsson.com/img/og.png?v=3">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="GAPTCHA: Find, scan, win">
+  <meta property="og:image:alt" content="GAPTCHA: Scan markers. Walk to where the arrows cross.">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="GAPTCHA: an augmented reality scavenger hunt">
   <meta name="twitter:description" content="An augmented reality scavenger hunt: scan printed markers to get bearings to a hidden checkpoint, then go find it.">
-  <meta name="twitter:image" content="https://gaptcha.joekarlsson.com/img/og.png?v=2">
-  <meta name="twitter:image:alt" content="GAPTCHA: Find, scan, win">
+  <meta name="twitter:image" content="https://gaptcha.joekarlsson.com/img/og.png?v=3">
+  <meta name="twitter:image:alt" content="GAPTCHA: Scan markers. Walk to where the arrows cross.">
   <meta name="twitter:site" content="@joekarlsson1">
   <meta name="twitter:creator" content="@joekarlsson1">
 
@@ -35,17 +35,28 @@
   <link rel="icon" href="/img/favicon-32x32.png" type="image/png" sizes="32x32">
   <link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
   <link rel="manifest" href="/site.webmanifest">
-  <link rel="stylesheet" href="/css/normalize.css">
-  <link rel="stylesheet" href="/css/skeleton.css">
   <link rel="stylesheet" href="/css/styles.css">
+  <link rel="preload" as="font" href="/fonts/anybody-latin.woff2" type="font/woff2" crossorigin>
 
   <script src="/js/analytics.js" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
-  <main id="main" class="section about">
-    <div class="container">
+  <main id="main">
+    <header class="page-head">
+      <p class="page-home"><a href="/">GAPTCHA</a></p>
+      <nav class="hero-nav" aria-label="Site">
+        <ul>
+          <li><a href="/#how-heading">How it works</a></li>
+          <li><a href="/img/marker-gaptcha.png" download>Print the marker</a></li>
+          <li><a href="/#map-heading">Live scans</a></li>
+          <li><a href="/about.html">About</a></li>
+        </ul>
+      </nav>
       <h1>About GAPTCHA</h1>
+    </header>
+    <div class="section about">
+    <div class="container prose">
       <p>GAPTCHA was an augmented reality scavenger hunt that five of us from DevLeague built at AT&amp;T&rsquo;s hackathon in Honolulu in March 2017: Sean Nakamura, Tony Gaskell, Brandon Baris, Joelle Torneros and me. The name stands for Geo-Augmented Place That Checks Authenticity.</p>
       <p>We printed square markers and left them around for people to find. Scan one with the web app and a green 3D arrow shows up over your camera view, pointing at a hidden checkpoint. An arrow gives you a direction but not a distance, so the idea was to collect bearings from a few markers and walk to where they cross. When you think you&rsquo;re standing on it, you tap Did I Win.</p>
       <p>My part was the server, the direction math and the homepage. I stubbed out the Express server and wrote the route that takes your phone&rsquo;s latitude and longitude and works out the bearing to the checkpoint with the Vincenty formula. I also got the live map pulling from AT&amp;T M2X, which tracked everyone playing. The checkpoint&rsquo;s location came from an M2X device, so it could move during the game. Get within 20 meters of it and the app tells you how many tries everyone took since the last win.</p>
@@ -55,6 +66,12 @@
       <p>More about it, with photos from that weekend, on <a href="https://www.joekarlsson.com/work/gaptcha/">its page on joekarlsson.com</a>.</p>
       <p class="actions"><a class="button button-primary" href="/">Back to GAPTCHA</a></p>
     </div>
+    </div>
   </main>
+  <footer class="site-footer">
+    <div class="container">
+      <p>Made in Honolulu in 2017, revived in 2026. Map data from OpenStreetMap.</p>
+    </div>
+  </footer>
 </body>
 </html>

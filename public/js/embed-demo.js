@@ -3,7 +3,7 @@
 // memory so it can't touch a real player's saved hunt.
 import { ORIGINAL_CHECKPOINT, destinationPoint } from './checkpoint.js';
 import { addPlayerAttempt, resetAttempts, isFastMode, loadState } from './simulated-players.js';
-import { mountHunterFeed, describeStats } from './hunter-feed.js';
+import { mountHunterFeed, describeStats, wirePauseButton } from './hunter-feed.js';
 import { buildDemoSteps, describeCheck } from './demo-steps.js';
 import { loadLeaflet, OSM_TILES, OSM_ATTRIBUTION } from './leaflet-loader.js';
 
@@ -36,7 +36,14 @@ function countDemoAttempt() {
   return attempts;
 }
 
-const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+// The Pause demo button holds the hunt and the feed where they are (WCAG 2.2.2).
+let paused = false;
+let resumeWaiters = [];
+const untilPlaying = () => (paused ? new Promise((resolve) => resumeWaiters.push(resolve)) : Promise.resolve());
+const sleep = async (ms) => {
+  await new Promise((resolve) => setTimeout(resolve, ms));
+  await untilPlaying();
+};
 
 // Links that would leave the frame for the real game open it in a new tab instead.
 for (const link of document.querySelectorAll('a[href="play.html"], a[href="/play.html"]')) {
@@ -45,12 +52,22 @@ for (const link of document.querySelectorAll('a[href="play.html"], a[href="/play
   link.rel = 'noopener';
 }
 
-mountHunterFeed({
+const feed = mountHunterFeed({
   list: document.getElementById('demo-hunter-feed'),
   stats: statsLine,
   checkpoint: ORIGINAL_CHECKPOINT,
   storage,
   delays: { min: 1500, max: 5000 }, // busier than the real page, so a short visit sees hunters
+});
+wirePauseButton(document.getElementById('demo-pause-button'), {
+  noun: 'demo',
+  pause() { paused = true; feed.stop(); },
+  resume() {
+    paused = false;
+    feed.resume();
+    for (const resolve of resumeWaiters) resolve();
+    resumeWaiters = [];
+  },
 });
 
 function walk(marker, from, to) {
@@ -59,9 +76,12 @@ function walk(marker, from, to) {
     return Promise.resolve();
   }
   return new Promise((resolve) => {
-    const started = performance.now();
+    let elapsed = 0;
+    let last = performance.now();
     function frame(now) {
-      const progress = Math.min(1, (now - started) / WALK_MS);
+      if (!paused) elapsed += now - last; // time spent paused doesn't move the hunter
+      last = now;
+      const progress = Math.min(1, elapsed / WALK_MS);
       marker.setLatLng([from.lat + (to.lat - from.lat) * progress, from.lon + (to.lon - from.lon) * progress]);
       if (progress < 1) requestAnimationFrame(frame);
       else resolve();
@@ -77,7 +97,7 @@ async function playHunt(L, layers) {
     if (step.type === 'start') {
       position = step.at;
       player = L.circleMarker([position.lat, position.lon], {
-        radius: 8, color: '#fff', weight: 3, fillColor: '#222', fillOpacity: 1, className: 'demo-player',
+        radius: 8, color: '#fff', weight: 3, fillColor: '#000', fillOpacity: 1, className: 'demo-player',
       }).addTo(layers);
       statusLine.textContent = step.text;
     } else if (step.type === 'walk') {
@@ -88,10 +108,10 @@ async function playHunt(L, layers) {
       countDemoAttempt();
       const arrowEnd = destinationPoint(step.at, step.bearing, step.distanceMeters + ARROW_OVERSHOOT_METERS);
       L.polyline([[step.at.lat, step.at.lon], [arrowEnd.lat, arrowEnd.lon]], {
-        color: '#0b7f72', weight: 3, dashArray: '8 6', className: 'demo-arrow',
+        color: '#0b6e28', weight: 3, dashArray: '8 6', className: 'demo-arrow',
       }).addTo(layers);
       L.circleMarker([step.at.lat, step.at.lon], {
-        radius: 7, color: '#0b7f72', weight: 2, fillColor: '#11DFC7', fillOpacity: 1, className: 'demo-scan',
+        radius: 7, color: '#0b6e28', weight: 2, fillColor: '#10a63c', fillOpacity: 1, className: 'demo-scan',
       }).addTo(layers);
       player.bringToFront();
       statusLine.textContent = step.text;
@@ -102,7 +122,7 @@ async function playHunt(L, layers) {
         resetAttempts(storage);
         statsLine.textContent = describeStats(loadState(storage));
         L.circleMarker([ORIGINAL_CHECKPOINT.lat, ORIGINAL_CHECKPOINT.lon], {
-          radius: 18, color: '#075e55', weight: 4, fill: false, className: 'demo-checkpoint',
+          radius: 18, color: '#000', weight: 4, fill: false, className: 'demo-checkpoint',
         }).bindTooltip('Checkpoint', { permanent: true, direction: 'top', offset: [0, -16] }).addTo(layers);
         player.bringToFront();
         if (reducedMotion) return false; // stay on the finished hunt; the feed keeps running

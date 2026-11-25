@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
-  seededRandom, initialState, nextEvent, describeEvent, addPlayerAttempt, resetAttempts, loadState,
+  seededRandom, startSimulation, initialState, nextEvent, describeEvent, addPlayerAttempt, resetAttempts, loadState,
   SCAN_DELAY_MS, SCAN_DISTANCE_METERS, HUNTERS,
 } from '../../public/js/simulated-players.js';
 import { distanceAndBearing } from '../../public/js/checkpoint.js';
@@ -78,4 +78,28 @@ test("the player's attempts add to the shared counter and a win resets it", () =
   resetAttempts(storage);
   assert.equal(JSON.parse(storage.getItem('gaptcha-simulation')).attempts, 0);
   assert.equal(storage.getItem('gaptcha-checkpoint'), null, 'the simulation never touches the player hunt');
+});
+
+test('a stopped simulation stays quiet until resumed, then picks up again', async () => {
+  const events = [];
+  const storage = new Map();
+  const memory = { getItem: (k) => storage.get(k) ?? null, setItem: (k, v) => storage.set(k, v) };
+  const simulation = startSimulation({
+    checkpoint: { lat: 21.3, lon: -157.8 },
+    storage: memory,
+    seed: 1,
+    delays: { min: 5, max: 10 },
+    onEvent: (event) => events.push(event),
+  });
+  simulation.stop();
+  await new Promise((resolve) => setTimeout(resolve, 40));
+  assert.equal(events.length, 0);
+  simulation.resume();
+  simulation.resume(); // a second resume must not start a second timer
+  await new Promise((resolve) => setTimeout(resolve, 40));
+  simulation.stop();
+  const count = events.length;
+  assert.ok(count > 0);
+  await new Promise((resolve) => setTimeout(resolve, 40));
+  assert.equal(events.length, count);
 });

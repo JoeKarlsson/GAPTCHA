@@ -1,10 +1,20 @@
-/* Raleway, self-hosted: one variable latin file covers the 300, 400 and 600 weights */
+/* GAPTCHA: the marker is the page (DECISIONS.md, 2026-11-24).
+   White, black and the green of the AR arrow; Anybody for display, Archivo for text. */
 @font-face {
-  font-family: 'Raleway';
+  font-family: 'Anybody';
   font-style: normal;
-  font-weight: 300 600;
+  font-weight: 800 900;
+  font-stretch: 50% 60%;
   font-display: swap;
-  src: url('../fonts/raleway-latin.woff2') format('woff2');
+  src: url('../fonts/anybody-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('../fonts/archivo-latin.woff2') format('woff2');
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
@@ -12,67 +22,58 @@
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
 :root {
   color-scheme: only light;
-  --color-ink: #222;
+  --color-ink: #000;
   --color-paper: #fff;
-  --color-accent: #11DFC7;
-  --color-accent-ink: #075e55; /* accent dark enough for text and buttons on white */
-  --color-band: #1c4f4a; /* solid backing behind the photo bands so white text keeps its contrast */
-  --font-body: "Raleway", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --color-green: #10a63c;     /* the AR arrow; fills, and text only when it's huge */
+  --color-green-ink: #0b6e28; /* green dark enough for lines and small text on white */
+  --font-display: "Anybody", "Arial Narrow", sans-serif;
+  --font-body: "Archivo", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --frame: clamp(18px, 3.2vw, 44px); /* the marker's black border */
+  --gutter: clamp(16px, 4vw, 48px);
   --space-1: 0.5rem;
   --space-2: 1rem;
   --space-3: 1.5rem;
   --space-4: 2rem;
   --space-5: 4rem;
-  --space-6: 6rem;
   --section-space: var(--space-5);
-  --phone-overhang: var(--space-5);
+  --duration-hover: 120ms;
+}
+@media (prefers-reduced-motion: reduce) {
+  :root { --duration-hover: 0s; }
+}
+@media (min-width: 750px) {
+  :root { --section-space: 6rem; }
 }
 
 /* Shared
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
-html { background: var(--color-paper); }
+*, *::before, *::after { box-sizing: border-box; }
+html { background: var(--color-paper); -webkit-text-size-adjust: 100%; }
 body {
+  margin: 0;
   color: var(--color-ink);
   background: var(--color-paper);
   font-family: var(--font-body);
-  font-size: 1.7rem; /* 17px: phones never get text under 16px */
+  font-size: 1.125rem;
+  line-height: 1.5;
 }
-h1, h2, h3, h4, h5, h6 { letter-spacing: normal; }
-img { max-width: 100%; height: auto; } /* keep photo proportions when width/height attributes are set */
-.button,
-button {
-  border-radius: 100px;
-  min-height: 44px;
-  height: auto;
-  padding: var(--space-1) var(--space-4);
-  font-size: 1.6rem;
-  line-height: 1.6;
-  letter-spacing: normal;
-  text-transform: none;
-  white-space: normal;
-  color: var(--color-ink);
-  border-color: var(--color-ink);
-}
-.button.button-primary,
-button.button-primary {
-  background-color: var(--color-accent-ink);
-  border-color: var(--color-accent-ink);
-  color: #fff;
-}
-.button.button-primary:hover,
-button.button-primary:hover,
-.button.button-primary:focus,
-button.button-primary:focus {
-  background-color: #04403a;
-  border-color: #04403a;
-  color: #fff;
-}
-a { color: var(--color-accent-ink); }
-a:focus-visible,
-button:focus-visible,
-.button:focus-visible {
-  outline: 3px solid var(--color-ink);
-  outline-offset: 3px;
+h1, h2, h3 { margin: 0 0 var(--space-2); font-family: var(--font-display); font-stretch: 50%; font-weight: 900; line-height: 0.9; }
+p { margin: 0 0 var(--space-2); }
+img { max-width: 100%; height: auto; display: block; }
+a { color: var(--color-ink); text-underline-offset: 0.2em; }
+.container { width: 100%; max-width: 1280px; margin: 0 auto; padding: 0 var(--gutter); }
+.section { padding: var(--section-space) 0; }
+.section :where(.container > :last-child, .column > :last-child) { margin-bottom: 0; }
+.section-heading { font-size: clamp(3.5rem, 9vw, 7rem); }
+.section-description { max-width: 65ch; }
+/* Read by screen readers, not shown */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
 .skip-link {
   position: absolute;
@@ -84,187 +85,266 @@ button:focus-visible,
   color: var(--color-ink);
 }
 .skip-link:focus { top: var(--space-2); }
+a:focus-visible,
+button:focus-visible {
+  outline: 3px solid var(--color-green-ink);
+  outline-offset: 3px;
+}
+
+/* Buttons: square, like the marker
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+.button,
+button {
+  display: inline-block;
+  min-height: 44px;
+  padding: 0.75rem 1.5rem;
+  border: 2px solid var(--color-ink);
+  border-radius: 0;
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font: 700 1.125rem/1.3 var(--font-body);
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color var(--duration-hover) ease-out, border-color var(--duration-hover) ease-out, scale 60ms ease-out;
+}
+.button-primary {
+  background: var(--color-ink);
+  color: var(--color-paper);
+}
+@media (hover: hover) {
+  .button:hover,
+  button:hover { background: var(--color-green); border-color: var(--color-green); color: var(--color-ink); }
+}
+.button:active,
+button:active { scale: 0.97; }
 .actions {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
   gap: var(--space-2);
+  margin: var(--space-3) 0 0;
 }
-.actions .button,
-.actions button { margin: 0; }
-/* Sections
-   Every section gets the same space above and below (--section-space), so the
-   gap between any two sections is the same. Skeleton's bottom margins on the
-   last element of a section are removed so they don't add to it.
-–––––––––––––––––––––––––––––––––––––––––––––––––– */
-.section {
-  padding: var(--section-space) 0;
-  text-align: center;
-}
-.section :where(.container > :last-child, .column > :last-child) { margin-bottom: 0; }
-.section-heading,
-.section-description {
-  margin-bottom: var(--space-3);
-}
-.section-heading { font-size: 3rem; }
 
-/* Hero
-   The phone sits on the bottom edge of the band and hangs --phone-overhang
-   below it; the next section adds that much to its top padding.
+/* Hero: the first screen is the printed marker
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
+/* The marker frame on every page: one margin, border and padding, held to the content column on big screens */
+.hero,
+.page-head {
+  margin: var(--space-2) max(var(--space-2), calc((100% - 1280px) / 2));
+  border: var(--frame) solid var(--color-ink);
+  padding: clamp(16px, 4vw, 48px);
+}
+@media (max-width: 699px) {
+  .hero, .page-head { margin: var(--space-1); }
+}
 .hero {
-  background-color: var(--color-band);
-  background-image: url('../img/background.webp');
-  background-blend-mode: multiply;
-  background-size: cover;
-  color: #fff;
-  padding-bottom: 0;
+  position: relative;
+  min-height: min(calc(100svh - 2rem), 900px);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto; /* minmax: a wide fallback font can't push the nav and button off screen */
+  grid-template-rows: auto 1fr auto;
+  gap: var(--space-3);
 }
-.hero h1 { margin-bottom: var(--space-1); }
-.hero-button {
-  font-size: 2.4rem;
+.hero h1 {
+  grid-column: 1;
+  font-size: clamp(4rem, 1rem + 13vw, 10rem);
+  line-height: 0.82;
+  margin: 0;
 }
-.hero .phone {
-  display: block;
+.hero-nav {
+  grid-column: 2;
+  text-align: right;
+}
+.hero-nav ul { list-style: none; margin: 0; padding: 0; }
+.hero-nav a { display: inline-block; padding-block: 12px; line-height: 1.2; }
+.hero-lede {
+  grid-column: 1;
+  grid-row: 3;
+  align-self: end;
+  max-width: 21em;
+  text-wrap: pretty;
+  font-size: clamp(1.125rem, 1.6vw, 1.375rem);
+  line-height: 1.35;
+  margin: 0;
+}
+/* The marker's triangle is the play button. The link is the whole square so the focus ring
+   has a box to draw; the triangle itself is painted on ::before. */
+.hero-play {
+  grid-column: 2;
+  grid-row: 2 / 4;
+  align-self: end;
+  justify-self: end;
+  position: relative;
+  pointer-events: none; /* the white half of the square isn't the button; ::before and the label take the clicks */
+  isolation: isolate; /* keeps the ::before triangle inside the link's own stacking context */
+  width: clamp(200px, 34vw, 480px);
+  aspect-ratio: 1;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  padding: 0 7% 7% 0;
+  color: var(--color-paper);
+  font: 800 clamp(1.5rem, 2.8vw, 2.75rem)/1 var(--font-display);
+  font-stretch: 60%;
+  text-align: right;
+  text-decoration: none;
+}
+.hero-play::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--color-ink);
+  clip-path: polygon(100% 0, 100% 100%, 0 100%);
+  pointer-events: auto;
+  transition: background-color var(--duration-hover) ease-out;
+}
+.hero-play { transition: color var(--duration-hover) ease-out; }
+@media (hover: hover) {
+  .hero-play:hover { color: var(--color-ink); }
+  .hero-play:hover::before { background: var(--color-green); }
+}
+.hero-play:focus-visible { color: var(--color-ink); }
+.hero-play:focus-visible::before { background: var(--color-green); }
+.hero-play:active::before { background: var(--color-green-ink); }
+.hero-play span { position: relative; pointer-events: auto; }
+@media (forced-colors: active) {
+  .hero-play::before { background: CanvasText; forced-color-adjust: none; }
+  .hero-play { color: Canvas; forced-color-adjust: none; }
+}
+@media (max-width: 699px) {
+  .hero { grid-template-columns: 1fr; grid-template-rows: auto auto auto 1fr; }
+  .hero-nav { grid-column: 1; grid-row: 2; text-align: left; }
+  .hero-nav ul { display: flex; flex-wrap: wrap; gap: 0 var(--space-3); }
+  .hero-lede { grid-row: 3; align-self: start; }
+  .hero-play { grid-column: 1; grid-row: 4; width: min(72vw, 320px); }
+}
+/* Phones on their side: size by height so the button and the lede stay on the first screen */
+@media (orientation: landscape) and (max-height: 500px) {
+  .hero h1 { font-size: 22svh; }
+  .hero-play { width: min(34vw, 55svh); }
+}
+
+/* Find, scan, win: the photos move over and behind the words as you scroll
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+.steps .container { position: relative; }
+.steps-words {
   position: relative;
   z-index: 1;
-  max-width: 80%;
-  max-height: 480px;
-  width: auto;
-  margin: var(--space-4) auto calc(-1 * var(--phone-overhang));
+  margin: 0;
+  text-align: center;
+  font-family: var(--font-display);
+  font-stretch: 50%;
+  font-weight: 900;
+  font-size: clamp(4.5rem, 1rem + 22vw, 11.25rem);
+  line-height: 0.8;
 }
-.hero + main > .how-it-works {
-  /* the hero has no bottom padding, so this section supplies the full gap below the phone */
-  padding-top: calc(2 * var(--section-space) + var(--phone-overhang));
+.steps-words span { display: block; }
+.step {
+  position: absolute;
+  z-index: 2;
+  width: clamp(150px, 28vw, 400px);
+  margin: 0;
+}
+.step.behind { z-index: 0; }
+.step figcaption {
+  position: absolute;
+  left: 0;
+  top: -16px;
+  background: var(--color-green);
+  color: var(--color-ink);
+  font-weight: 700;
+  padding: 2px 8px;
+  line-height: 1.4;
+}
+.step-find { left: 0; top: 0; }
+.step-scan { right: 0; top: 38%; }
+.step-win { left: 32%; bottom: 0; }
+@media (max-width: 699px) {
+  .step { width: 40vw; }
+  .step-scan { z-index: 0; top: 0; } /* on phones every photo goes behind its word, one per corner, so the words stay readable */
+  .step-win { left: auto; right: 0; }
+  /* the giant words already say find, scan, win; the captions stay for screen readers */
+  .step figcaption { clip-path: inset(50%); width: 1px; height: 1px; overflow: hidden; white-space: nowrap; padding: 0; }
+}
+/* design-ok: scroll-driven motion on a concept site (web design rules, exception); still under reduced motion */
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) { /* design-ok: concept-site scroll motion */
+    .step { animation: step-drift linear both; animation-timeline: view(); } /* design-ok: concept-site scroll motion */
+    .step-find { --drift: 60%; }
+    .step-scan { --drift: 90%; }
+    .step-win { --drift: 50%; }
+  }
+}
+@keyframes step-drift {
+  from { transform: translateY(var(--drift)); }
+  to { transform: translateY(calc(-1 * var(--drift))); }
 }
 
-/* Map
+/* Did I win: a black band
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
-#scan-map {
-  width: 100%;
-  height: 300px;
-}
-.map { text-align: left; }
-#win-status { font-weight: 600; }
-/* the status line takes no space until it has something to say */
-.actions:has(+ #win-status:empty) { margin-bottom: 0; }
+.win { background: var(--color-ink); color: var(--color-paper); }
+.win .container { display: grid; gap: var(--space-4); align-items: end; }
+@media (min-width: 750px) { .win .container { grid-template-columns: 1fr 1fr; } }
+.win .section-heading { margin: 0; font-size: clamp(5rem, 13vw, 12rem); line-height: 0.85; }
+.win .button-primary { background: var(--color-green); border-color: var(--color-green); color: var(--color-ink); }
+.win button:not(.button-primary) { background: none; border-color: var(--color-paper); color: var(--color-paper); }
+.win button:hover { background: var(--color-paper); border-color: var(--color-paper); color: var(--color-ink); }
+.win button:focus-visible, .win a:focus-visible { outline-color: var(--color-green); }
+#win-status { font-weight: 700; font-size: 1.25rem; margin: var(--space-3) 0 0; }
+#win-status:empty { display: none; }
 
-/* Values
+/* Live scans: the feed as giant rows, then the map
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
-.values {
-  background-color: var(--color-band);
-  background-blend-mode: multiply;
-  background-image: url('../img/values-bg.webp');
-  background-size: cover;
-  color: #fff;
+.hunter-stats { font-weight: 700; }
+.hunter-feed { list-style: none; margin: 0 0 var(--space-2); padding: 0; }
+.feed-giant .hunter-feed li {
+  font-family: var(--font-display);
+  font-stretch: 55%;
+  font-weight: 800;
+  font-size: clamp(1.75rem, 5.2vw, 5rem);
+  line-height: 1.02;
+  /* every row keeps one height, so a new event moving the text down shifts nothing */
+  block-size: 3lh;
+  overflow: hidden;
+  margin-bottom: 0.4em;
 }
-.value-heading {
-  margin-bottom: var(--space-1);
-  color: #11DFC7;
-}
-.value-description {
-  font-weight: 400;
-}
-.value img { display: block; margin: 0 auto; }
-
-/* Bigger than 550: text and phone side by side, phone on the band's bottom edge */
-@media (min-width: 550px) {
-  .hero .row {
-    display: flex;
-    align-items: flex-end;
-  }
-  .hero .row::after { display: none; }
-  .hero .row > .column:first-child {
-    align-self: center;
-    text-align: left;
-    padding-bottom: var(--phone-overhang);
-  }
-  .hero .phone {
-    max-width: 100%;
-    max-height: 362px;
-    margin-top: 0;
-    margin-right: 0;
-  }
-  #scan-map { height: 340px; }
-  .hero-heading { font-size: 2.4rem; }
-}
-
-/* Bigger than 750 */
-@media (min-width: 750px) {
-  .hero-heading { font-size: 2.6rem; }
-  .section-description {
-    max-width: 60%;
-    margin-left: auto;
-    margin-right: auto;
-  }
-  .hero .phone { max-height: 510px; }
-}
-
-/* Bigger than 1000 */
 @media (min-width: 1000px) {
-  .hero-button { font-size: 3.0rem; }
-  .hero-heading { font-size: 3.0rem; }
-  .hero .phone { max-height: 560px; }
+  .feed-giant .hunter-feed li { font-size: clamp(3rem, 4.4vw, 4.25rem); block-size: 2lh; }
 }
+.simulated-note { font-size: 1rem; }
+.feed-controls { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); margin-bottom: var(--space-2); }
+.feed-controls p { margin: 0; }
+#scan-map { width: 100%; height: 340px; margin: var(--space-3) 0 var(--space-4); }
+@media (min-width: 750px) { #scan-map { height: 460px; } }
 
-/* Share and footer
+/* Credits, share and footer
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
 .share-links {
   list-style: none;
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
+  align-items: center;
   gap: var(--space-1) var(--space-3);
+  margin: 0;
   padding: 0;
+  font-family: var(--font-display);
+  font-stretch: 60%;
+  font-weight: 800;
+  font-size: clamp(1.75rem, 4vw, 3rem);
 }
-.share-links li { margin: 0; }
-.share-links a {
-  display: inline-block;
-  padding: var(--space-1) var(--space-1);
-  min-height: 44px;
-  min-width: 44px;
-  text-align: center;
-  box-sizing: border-box;
-}
-.share-links button { margin: 0; }
-.site-footer {
-  padding: var(--space-4) 0;
-  text-align: center;
-}
-
-/* Simulated hunters
-–––––––––––––––––––––––––––––––––––––––––––––––––– */
-.hunter-stats { font-weight: 600; }
-.hunter-feed { list-style: none; margin: 0 0 var(--space-2); padding: 0; }
-.hunter-feed li { margin-bottom: var(--space-1); }
-.simulated-note { font-size: 1.6rem; }
-
-/* Leaflet sizes its credit in rem-less px, but Skeleton's 62.5% root shrinks it to 7.5px */
-.leaflet-container .leaflet-control-attribution { font-size: 12px; line-height: 1.5; }
-.leaflet-container .leaflet-control-attribution a { display: inline-block; padding: 2px 0; }
-
-@media (min-width: 750px) {
-  :root { --section-space: var(--space-6); }
-}
-
-/* Find, scan, win: a gap under each photo when they stack on phones,
-   and captions held to two lines in a row so the photos line up */
-@media (max-width: 549px) {
-  .value + .value { margin-top: var(--space-5); }
-}
-@media (min-width: 550px) {
-  .value-description { min-height: 3.2em; }
-}
+.share-links a { display: inline-block; min-height: 44px; min-width: 44px; text-align: center; }
+.share-links button { font-size: 1.125rem; }
+.site-footer { padding: var(--space-4) 0; font-size: 1rem; }
 
 /* Embedded demo (js/embed-flag.js sets data-embed when the page is framed or has ?embed)
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
 #demo { display: none; }
-[data-embed] #demo { display: block; padding: var(--space-4) 0; text-align: left; }
+[data-embed] #demo { display: block; padding: var(--space-4) 0; }
 [data-embed] .hero,
 [data-embed] main > section:not(#demo),
 [data-embed] .site-footer { display: none; }
-.demo-heading { font-size: 3.6rem; margin-bottom: var(--space-2); }
-.demo-status { min-height: 3.2em; font-weight: 600; font-size: 1.9rem; }
+.demo-heading { font-size: 3.5rem; margin-bottom: var(--space-2); }
+.demo-status { min-height: 3.2em; font-weight: 700; font-size: 1.2rem; }
 .demo-map { width: 100%; height: 320px; margin-top: var(--space-3); }
 @media (min-width: 550px) {
   .demo-map { height: 480px; margin-top: 0; }
@@ -279,29 +359,36 @@ button:focus-visible,
 [data-embed] body { height: 100dvh; margin: 0; }
 [data-embed] #main,
 [data-embed] #demo,
-[data-embed] #demo .container { height: 100%; box-sizing: border-box; }
+[data-embed] #demo .container { height: 100%; }
 [data-embed] #demo .row { height: 100%; display: flex; flex-direction: column; gap: var(--space-3); }
-[data-embed] #demo .column { float: none; width: 100%; margin-left: 0; }
 [data-embed] #demo .column:first-child { flex: 1 1 auto; display: flex; flex-direction: column; }
 [data-embed] #demo .column:last-child { flex: 0 0 auto; }
 [data-embed] .hunter-feed {
   flex: 1 1 0;
   min-height: 0;
   overflow: hidden;
-  /* The oldest entry that only half fits fades out instead of being cut mid-line */
+  /* design-ok: the oldest entry that only half fits fades out instead of being cut mid-line */
   -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 3em), transparent);
-  mask-image: linear-gradient(to bottom, #000 calc(100% - 3em), transparent);
+  mask-image: linear-gradient(to bottom, #000 calc(100% - 3em), transparent); /* design-ok: fade mask, not a fill */
 }
 [data-embed] .demo-map { margin-top: 0; }
 @media (min-width: 550px) {
   [data-embed] #demo .row { flex-direction: row; }
-  /* Half and half, as on the full page: both selectors outrank the stacked rules above */
   [data-embed] #demo .column:first-child,
   [data-embed] #demo .column:last-child { flex: 1 1 0; min-width: 0; }
   [data-embed] #demo .column:last-child { align-self: center; }
 }
 
-/* About
+/* About and 404
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
-.about .container > p:not(.actions) { max-width: 65ch; margin-inline: auto; text-align: left; }
-.about h2 { margin-top: var(--space-4); }
+.page-head { display: grid; grid-template-columns: 1fr auto; gap: var(--space-3); }
+.page-home { margin: 0; font: 900 2.5rem/1 var(--font-display); font-stretch: 50%; }
+.page-home a { text-decoration: none; display: inline-block; padding-block: 4px; }
+.page-head h1 { grid-column: 1 / -1; font-size: clamp(4rem, 12vw, 10rem); line-height: 0.85; margin: var(--space-4) 0 0; }
+@media (max-width: 699px) {
+  .page-head { grid-template-columns: 1fr; }
+  .page-head .hero-nav { grid-column: 1; text-align: left; }
+  .page-head .hero-nav ul { display: flex; flex-wrap: wrap; gap: 0 var(--space-3); }
+}
+.prose > p { max-width: 65ch; }
+.prose h2 { font-size: clamp(2.5rem, 6vw, 4.5rem); margin-top: var(--space-5); }

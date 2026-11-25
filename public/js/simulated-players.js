@@ -121,7 +121,11 @@ export function startSimulation({ checkpoint, storage, onEvent, seed = Date.now(
   const startState = loadState(storage, random);
   saveState(storage, startState);
   schedule();
-  return { state: startState, stop: () => clearTimeout(timer) };
+  return {
+    state: startState,
+    stop() { clearTimeout(timer); timer = null; },
+    resume() { if (timer === null) schedule(); },
+  };
 }
 
 export function isFastMode(search) {

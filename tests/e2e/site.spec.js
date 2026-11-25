@@ -79,11 +79,11 @@ test('standing on the checkpoint wins, and a miss says so', async ({ page, conte
   await context.grantPermissions(['geolocation']);
   await context.setGeolocation({ latitude: 21.2857, longitude: -157.8077 }); // ~40 m away
   await page.goto('/');
-  await page.getByRole('button', { name: 'Did I win?' }).click();
+  await page.getByRole('button', { name: 'Check my spot' }).click();
   await expect(page.locator('#win-status')).toHaveText(/Nope, not here/);
 
   await context.setGeolocation(HONOLULU_CHECKPOINT);
-  await page.getByRole('button', { name: 'Did I win?' }).click();
+  await page.getByRole('button', { name: 'Check my spot' }).click();
   await expect(page.locator('#win-status')).toHaveText(/GOT ’EM! It took a total of \d+ attempts since it was last found/);
 });
 
@@ -107,7 +107,7 @@ test('at 2560px the content stays in the centered column', async ({ page }, test
   await page.setViewportSize({ width: 2560, height: 1400 });
   await page.goto('/');
   const outside = await page.evaluate(() => {
-    const columnWidth = 960 + 40; // Skeleton container plus its padding
+    const columnWidth = 1280; // .container max-width, padding included
     const left = (window.innerWidth - columnWidth) / 2;
     const right = left + columnWidth;
     return [...document.querySelectorAll('.container *')]
@@ -133,7 +133,7 @@ test('every page has its metadata and the sitemap lists the indexable ones', asy
     expect(description?.length, `${file} description`).toBeLessThanOrEqual(160);
     expect(html, file).toContain('<meta name="color-scheme" content="only light">');
     expect(html, file).toContain('<meta name="darkreader-lock">');
-    expect(html, file).toContain('<meta property="og:image" content="https://gaptcha.joekarlsson.com/img/og.png?v=2">');
+    expect(html, file).toContain('<meta property="og:image" content="https://gaptcha.joekarlsson.com/img/og.png?v=3">');
     expect(html.match(/<h1[\s>]/g)?.length, `${file} h1 count`).toBe(1);
     const title = html.match(/<title>([^<]+)<\/title>/)[1];
     expect(titles.has(title), `duplicate title ${title}`).toBe(false);
@@ -169,7 +169,7 @@ test('simulated hunters show up in the feed and on the map', async ({ page, cont
   await context.grantPermissions(['geolocation']);
   await context.setGeolocation({ latitude: 44.9778, longitude: -93.265 });
   await page.goto('/?simulate=fast');
-  await expect(page.locator('#hunter-stats')).toHaveText(/\d+ hunters active now · \d+ attempts since the checkpoint was last found/);
+  await expect(page.locator('#hunter-stats')).toHaveText(/\d+ hunters active now\. \d+ attempts since the checkpoint was last found\./);
   await expect(page.locator('#hunter-feed li').first()).toHaveText(/scanned a marker|found the checkpoint/);
   await expect(page.locator('#hunter-feed li')).toHaveCount(5);
   await page.locator('#scan-map').scrollIntoViewIfNeeded();
@@ -185,7 +185,7 @@ test('your own win uses the shared attempt counter and resets it', async ({ page
   await context.setGeolocation(HONOLULU_CHECKPOINT);
   await page.addInitScript(() => localStorage.setItem('gaptcha-simulation', JSON.stringify({ attempts: 41, hunters: 5 })));
   await page.goto('/');
-  await page.getByRole('button', { name: 'Did I win?' }).click();
+  await page.getByRole('button', { name: 'Check my spot' }).click();
   await expect(page.locator('#win-status')).toHaveText('GOT ’EM! It took a total of 42 attempts since it was last found.');
 });
 
@@ -215,6 +215,8 @@ test('Leaflet loads only when the map nears the screen', async ({ page }) => {
 
 test('every section is the same distance from the next', async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== 'desktop', 'one viewport is enough; the spacing tokens are shared');
+  // The find/scan/win photos drift past the section edges on purpose as you scroll; measure the still layout.
+  await page.emulateMedia({ reducedMotion: 'reduce' });
   for (const width of [390, 1280]) {
     await page.setViewportSize({ width, height: 900 });
     await page.goto('/');
@@ -274,4 +276,41 @@ test('the full page is unchanged when it isn’t framed', async ({ page }) => {
   await page.goto('/');
   await expect(page.locator('#demo')).toBeHidden();
   await expect(page.locator('.hero')).toBeVisible();
+});
+
+test('new hunter events move nothing on the page', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name === 'iphone', 'layout-shift entries are Chromium only');
+  await page.goto('/?simulate=fast');
+  await page.locator('#hunter-feed').scrollIntoViewIfNeeded();
+  await page.waitForLoadState('networkidle');
+  const shift = await page.evaluate(() => new Promise((resolve) => {
+    let total = 0;
+    new PerformanceObserver((list) => {
+      for (const entry of list.getEntries()) if (!entry.hadRecentInput) total += entry.value;
+    }).observe({ type: 'layout-shift' });
+    setTimeout(() => resolve(total), 3000);
+  }));
+  expect(shift).toBeLessThan(0.02);
+});
+
+test('fonts stay within their budget', async ({ page }) => {
+  const fonts = [];
+  page.on('response', async (response) => {
+    if (response.url().endsWith('.woff2')) fonts.push((await response.body()).length);
+  });
+  await page.goto('/');
+  await page.waitForLoadState('networkidle');
+  expect(fonts.length).toBe(2);
+  expect(fonts.reduce((sum, size) => sum + size, 0)).toBeLessThan(70 * 1024);
+});
+
+test('step photos are not much bigger than their slot', async ({ page }) => {
+  await page.goto('/');
+  const dpr = await page.evaluate(() => window.devicePixelRatio);
+  for (const img of await page.locator('.step img').all()) {
+    await img.scrollIntoViewIfNeeded();
+    await expect.poll(() => img.evaluate((el) => el.complete && el.naturalWidth > 0)).toBe(true);
+    const { natural, rendered, src } = await img.evaluate((el) => ({ natural: el.naturalWidth, rendered: el.clientWidth, src: el.currentSrc }));
+    expect(natural, src).toBeLessThanOrEqual(Math.max(500, 1.3 * rendered * dpr));
+  }
 });
