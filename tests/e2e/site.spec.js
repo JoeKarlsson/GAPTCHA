@@ -140,6 +140,9 @@ test('every page has its metadata and the sitemap lists the indexable ones', asy
     titles.add(title);
     if (!html.includes('content="noindex"')) {
       expect(html, file).toMatch(/<link rel="canonical" href="https:\/\/gaptcha\.joekarlsson\.com\//);
+      const jsonLd = html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)?.[1];
+      expect(jsonLd, `${file} JSON-LD`).toBeTruthy();
+      expect(JSON.parse(jsonLd)['@context'], `${file} JSON-LD`).toBe('https://schema.org');
       indexable.push(file === 'index.html' ? 'https://gaptcha.joekarlsson.com/' : `https://gaptcha.joekarlsson.com/${file}`);
     }
   }
